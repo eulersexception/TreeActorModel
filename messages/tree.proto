@@ -2,3 +2,35 @@ syntax = "proto3";
 package messages;
 
 message HelloWorld {}
+
+message Create {
+    int32 size = 1;
+}
+
+message Search {
+    int32 id = 1;
+    string token = 2;
+    int32 key = 3;
+}
+
+message Insert {
+    int32 id = 1;
+    string token = 2;
+    int32 value = 3;
+}
+
+message Delete {
+    int32 id = 1;
+    string token = 2;
+    int32 key = 3;
+}
+
+message Traverse {
+    int32 id = 1;
+    string token = 2;
+}
+
+message DelTree {
+    int32 id = 1;
+    string token = 2;
+}
