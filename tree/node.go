@@ -187,8 +187,18 @@ func splitMapAndMarkFlag(src map[int32]string) (int32, map[int32]string, map[int
 	return int32(flag), left, right
 }
 
-func (root Node) delete(key int32) bool {
-	return true
+func (root Node) delete(key int32) {
+	cur := root
+
+	for ; cur.isLeaf; {
+		if cur.maxLeft < key {
+			cur = *cur.right
+		} else {
+			cur = *cur.left
+		}
+	}
+
+	delete(cur.key_values, key)
 }
 
 func (root Node) traverse(id int32) []string {
