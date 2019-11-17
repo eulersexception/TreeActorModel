@@ -103,6 +103,8 @@ func (m *CreateRequest) GetSize_() int32 {
 }
 
 type CreateResponse struct {
+	Id    int32  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Token string `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
 }
 
 func (m *CreateResponse) Reset()      { *m = CreateResponse{} }
@@ -137,8 +139,24 @@ func (m *CreateResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_CreateResponse proto.InternalMessageInfo
 
+func (m *CreateResponse) GetId() int32 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *CreateResponse) GetToken() string {
+	if m != nil {
+		return m.Token
+	}
+	return ""
+}
+
 type SearchRequest struct {
-	Key int32 `protobuf:"varint,3,opt,name=key,proto3" json:"key,omitempty"`
+	Id    int32  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Token string `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
+	Key   int32  `protobuf:"varint,3,opt,name=key,proto3" json:"key,omitempty"`
 }
 
 func (m *SearchRequest) Reset()      { *m = SearchRequest{} }
@@ -173,6 +191,20 @@ func (m *SearchRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_SearchRequest proto.InternalMessageInfo
 
+func (m *SearchRequest) GetId() int32 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *SearchRequest) GetToken() string {
+	if m != nil {
+		return m.Token
+	}
+	return ""
+}
+
 func (m *SearchRequest) GetKey() int32 {
 	if m != nil {
 		return m.Key
@@ -181,7 +213,8 @@ func (m *SearchRequest) GetKey() int32 {
 }
 
 type SearchResponse struct {
-	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	Code  int32  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 }
 
 func (m *SearchResponse) Reset()      { *m = SearchResponse{} }
@@ -215,6 +248,13 @@ func (m *SearchResponse) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_SearchResponse proto.InternalMessageInfo
+
+func (m *SearchResponse) GetCode() int32 {
+	if m != nil {
+		return m.Code
+	}
+	return 0
+}
 
 func (m *SearchResponse) GetValue() string {
 	if m != nil {
@@ -409,7 +449,8 @@ func (m *DeleteRequest) GetKey() int32 {
 }
 
 type DeleteResponse struct {
-	Result string `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+	Code   int32  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Result string `protobuf:"bytes,2,opt,name=result,proto3" json:"result,omitempty"`
 }
 
 func (m *DeleteResponse) Reset()      { *m = DeleteResponse{} }
@@ -443,6 +484,13 @@ func (m *DeleteResponse) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_DeleteResponse proto.InternalMessageInfo
+
+func (m *DeleteResponse) GetCode() int32 {
+	if m != nil {
+		return m.Code
+	}
+	return 0
+}
 
 func (m *DeleteResponse) GetResult() string {
 	if m != nil {
@@ -664,7 +712,8 @@ func (m *DeleteTreeRequest) GetToken() string {
 }
 
 type DeleteTreeResponse struct {
-	Result string `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+	Code    int32  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 }
 
 func (m *DeleteTreeResponse) Reset()      { *m = DeleteTreeResponse{} }
@@ -699,9 +748,118 @@ func (m *DeleteTreeResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DeleteTreeResponse proto.InternalMessageInfo
 
-func (m *DeleteTreeResponse) GetResult() string {
+func (m *DeleteTreeResponse) GetCode() int32 {
 	if m != nil {
-		return m.Result
+		return m.Code
+	}
+	return 0
+}
+
+func (m *DeleteTreeResponse) GetMessage() string {
+	if m != nil {
+		return m.Message
+	}
+	return ""
+}
+
+type ForceTreeDeleteRequest struct {
+	Id    int32  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Token string `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
+}
+
+func (m *ForceTreeDeleteRequest) Reset()      { *m = ForceTreeDeleteRequest{} }
+func (*ForceTreeDeleteRequest) ProtoMessage() {}
+func (*ForceTreeDeleteRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cb3889276909882a, []int{14}
+}
+func (m *ForceTreeDeleteRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ForceTreeDeleteRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ForceTreeDeleteRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ForceTreeDeleteRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ForceTreeDeleteRequest.Merge(m, src)
+}
+func (m *ForceTreeDeleteRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *ForceTreeDeleteRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ForceTreeDeleteRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ForceTreeDeleteRequest proto.InternalMessageInfo
+
+func (m *ForceTreeDeleteRequest) GetId() int32 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *ForceTreeDeleteRequest) GetToken() string {
+	if m != nil {
+		return m.Token
+	}
+	return ""
+}
+
+type ForceTreeDeleteResponse struct {
+	Code    int32  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+}
+
+func (m *ForceTreeDeleteResponse) Reset()      { *m = ForceTreeDeleteResponse{} }
+func (*ForceTreeDeleteResponse) ProtoMessage() {}
+func (*ForceTreeDeleteResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cb3889276909882a, []int{15}
+}
+func (m *ForceTreeDeleteResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ForceTreeDeleteResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ForceTreeDeleteResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ForceTreeDeleteResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ForceTreeDeleteResponse.Merge(m, src)
+}
+func (m *ForceTreeDeleteResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *ForceTreeDeleteResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ForceTreeDeleteResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ForceTreeDeleteResponse proto.InternalMessageInfo
+
+func (m *ForceTreeDeleteResponse) GetCode() int32 {
+	if m != nil {
+		return m.Code
+	}
+	return 0
+}
+
+func (m *ForceTreeDeleteResponse) GetMessage() string {
+	if m != nil {
+		return m.Message
 	}
 	return ""
 }
@@ -721,38 +879,41 @@ func init() {
 	proto.RegisterType((*TraverseResponse)(nil), "messages.TraverseResponse")
 	proto.RegisterType((*DeleteTreeRequest)(nil), "messages.DeleteTreeRequest")
 	proto.RegisterType((*DeleteTreeResponse)(nil), "messages.DeleteTreeResponse")
+	proto.RegisterType((*ForceTreeDeleteRequest)(nil), "messages.ForceTreeDeleteRequest")
+	proto.RegisterType((*ForceTreeDeleteResponse)(nil), "messages.ForceTreeDeleteResponse")
 }
 
 func init() { proto.RegisterFile("tree.proto", fileDescriptor_cb3889276909882a) }
 
 var fileDescriptor_cb3889276909882a = []byte{
-	// 404 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x93, 0xcf, 0x6e, 0xd3, 0x40,
-	0x10, 0xc6, 0xbd, 0xfe, 0x13, 0xc2, 0x80, 0x4d, 0x58, 0x21, 0xe4, 0xd3, 0x2a, 0x2c, 0x08, 0xf9,
-	0x80, 0x7c, 0x00, 0x24, 0x84, 0xc4, 0x09, 0x90, 0x80, 0x1b, 0x72, 0x23, 0xf5, 0xec, 0xda, 0xa3,
-	0xd6, 0x8a, 0x1b, 0xa7, 0xbb, 0x76, 0xaa, 0xf6, 0xd4, 0x47, 0xe8, 0x63, 0xf4, 0x51, 0x7a, 0xcc,
-	0x31, 0xc7, 0xc6, 0xb9, 0xf4, 0x98, 0x47, 0xa8, 0xfc, 0x67, 0xeb, 0x54, 0xad, 0x2a, 0xa5, 0xb7,
-	0x19, 0x79, 0xbe, 0xef, 0x37, 0xf3, 0xd9, 0x06, 0xc8, 0x05, 0xa2, 0x3f, 0x15, 0x59, 0x9e, 0xd1,
-	0xfe, 0x21, 0x4a, 0x19, 0xee, 0xa3, 0xe4, 0x2f, 0x01, 0xfe, 0x62, 0x9a, 0x66, 0xbb, 0x99, 0x48,
-	0x63, 0xfe, 0x1e, 0xec, 0x5f, 0x02, 0xc3, 0x1c, 0x03, 0x3c, 0x2a, 0x50, 0xe6, 0x94, 0x82, 0x29,
-	0x93, 0x53, 0x74, 0xc9, 0x90, 0x78, 0x56, 0x50, 0xd7, 0x7c, 0x00, 0x8e, 0x1a, 0x92, 0xd3, 0x6c,
-	0x22, 0x91, 0xbf, 0x03, 0x7b, 0x07, 0x43, 0x11, 0x1d, 0x28, 0xd9, 0x00, 0x8c, 0x31, 0x9e, 0xb8,
-	0x46, 0xad, 0xaa, 0x4a, 0xfe, 0x11, 0x1c, 0x35, 0xd2, 0x88, 0xe8, 0x1b, 0xb0, 0x66, 0x61, 0x5a,
-	0x34, 0xde, 0xcf, 0x83, 0xa6, 0xe1, 0xc7, 0x60, 0xff, 0x9b, 0x48, 0x14, 0xb9, 0xb2, 0x72, 0x40,
-	0x4f, 0xe2, 0x96, 0xaf, 0x27, 0x71, 0x25, 0xcb, 0xb3, 0x31, 0x4e, 0x5c, 0xbd, 0x91, 0xd5, 0xcd,
-	0x7d, 0x60, 0x67, 0x6f, 0x6e, 0xd8, 0x53, 0x17, 0x9e, 0xc9, 0x22, 0x8a, 0x50, 0x4a, 0xd7, 0x1a,
-	0x12, 0xaf, 0x1f, 0xa8, 0x96, 0xff, 0x00, 0x47, 0x81, 0xdb, 0x05, 0x29, 0x98, 0x51, 0x16, 0xdf,
-	0xde, 0x5e, 0xd5, 0xf4, 0x2d, 0xf4, 0x04, 0xca, 0x22, 0xcd, 0x5b, 0x7c, 0xdb, 0xf1, 0x3f, 0x60,
-	0xff, 0xc6, 0x14, 0xbb, 0xe0, 0x9e, 0xb8, 0x36, 0xf7, 0xc0, 0x51, 0x46, 0xed, 0x1a, 0x1d, 0x92,
-	0xdc, 0x41, 0x7e, 0x83, 0x57, 0x23, 0x11, 0xce, 0x50, 0xc8, 0xed, 0xa0, 0xdc, 0x07, 0xf3, 0x7f,
-	0x98, 0x08, 0x05, 0x27, 0x0f, 0x64, 0xa6, 0x6f, 0xbe, 0x92, 0x18, 0x06, 0x1d, 0x68, 0xfb, 0x6c,
-	0xe8, 0x07, 0xb0, 0xa6, 0x61, 0x22, 0xa4, 0x6b, 0x0c, 0x0d, 0xef, 0xc5, 0x67, 0xc7, 0x57, 0x1f,
-	0x9f, 0x5f, 0xad, 0x11, 0x34, 0x0f, 0xf9, 0x77, 0x78, 0xdd, 0x1c, 0x3e, 0x12, 0xb8, 0xe5, 0x41,
-	0x9f, 0x80, 0x6e, 0x4a, 0x1f, 0xcf, 0xed, 0xe7, 0xd7, 0xf9, 0x92, 0x69, 0x8b, 0x25, 0xd3, 0xd6,
-	0x4b, 0x46, 0xce, 0x4a, 0x46, 0x2e, 0x4a, 0x46, 0x2e, 0x4b, 0x46, 0xe6, 0x25, 0x23, 0x57, 0x25,
-	0x23, 0xd7, 0x25, 0xd3, 0xd6, 0x25, 0x23, 0xe7, 0x2b, 0xa6, 0xcd, 0x57, 0x4c, 0x5b, 0xac, 0x98,
-	0xb6, 0xd7, 0xab, 0x7f, 0x9c, 0x2f, 0x37, 0x01, 0x00, 0x00, 0xff, 0xff, 0x05, 0xbb, 0x18, 0x60,
-	0x46, 0x03, 0x00, 0x00,
+	// 422 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x94, 0xc1, 0xce, 0x93, 0x40,
+	0x10, 0x80, 0xd9, 0x02, 0x7f, 0xeb, 0x68, 0xb1, 0x6e, 0x4c, 0xe5, 0xb4, 0x21, 0xab, 0x07, 0x4e,
+	0x1c, 0xd4, 0x68, 0x34, 0x8d, 0x87, 0x6a, 0xac, 0xde, 0x0c, 0x36, 0xf1, 0x8c, 0x30, 0x51, 0x52,
+	0xec, 0xd6, 0x5d, 0xa8, 0xd1, 0x93, 0x8f, 0xe0, 0x63, 0xf8, 0x28, 0x1e, 0x7b, 0xec, 0xd1, 0xd2,
+	0x8b, 0xc7, 0x3e, 0x82, 0x81, 0xb2, 0xb6, 0x46, 0xd3, 0x58, 0xbc, 0xcd, 0x84, 0x99, 0x6f, 0x3e,
+	0x66, 0x08, 0x00, 0xb9, 0x44, 0x0c, 0x16, 0x52, 0xe4, 0x82, 0xf6, 0xde, 0xa1, 0x52, 0xd1, 0x1b,
+	0x54, 0xfc, 0x0a, 0xc0, 0x33, 0xcc, 0x32, 0xf1, 0x4a, 0xc8, 0x2c, 0xe1, 0x37, 0xa1, 0xff, 0x58,
+	0x62, 0x94, 0x63, 0x88, 0xef, 0x0b, 0x54, 0x39, 0xa5, 0x60, 0xa9, 0xf4, 0x13, 0xba, 0xc4, 0x23,
+	0xbe, 0x1d, 0xd6, 0x31, 0xbf, 0x07, 0x8e, 0x2e, 0x52, 0x0b, 0x31, 0x57, 0x48, 0x1d, 0xe8, 0xa4,
+	0x49, 0x53, 0xd3, 0x49, 0x13, 0x7a, 0x1d, 0xec, 0x5c, 0xcc, 0x70, 0xee, 0x76, 0x3c, 0xe2, 0x5f,
+	0x0a, 0xf7, 0x09, 0x9f, 0x40, 0xff, 0x25, 0x46, 0x32, 0x7e, 0xab, 0xe1, 0xff, 0xd4, 0x46, 0x07,
+	0x60, 0xce, 0xf0, 0xa3, 0x6b, 0xd6, 0x65, 0x55, 0xc8, 0x1f, 0x82, 0xa3, 0x41, 0x8d, 0x00, 0x05,
+	0x2b, 0x16, 0xc9, 0x2f, 0xcd, 0x2a, 0xae, 0x68, 0xcb, 0x28, 0x2b, 0x50, 0xd3, 0xea, 0x84, 0x7f,
+	0x80, 0xfe, 0xf3, 0xb9, 0x42, 0x99, 0xff, 0xa7, 0xc4, 0x01, 0x6f, 0x1d, 0xe1, 0xa9, 0x0b, 0x5d,
+	0x55, 0xc4, 0x31, 0x2a, 0xe5, 0xda, 0x1e, 0xf1, 0x7b, 0xa1, 0x4e, 0xf9, 0x08, 0x1c, 0x3d, 0xf8,
+	0x84, 0xf4, 0x10, 0x2e, 0x24, 0xaa, 0x22, 0xcb, 0x9b, 0xf1, 0x4d, 0x56, 0xed, 0xee, 0x09, 0x66,
+	0x78, 0x38, 0x4c, 0xdb, 0xdd, 0x8d, 0xc0, 0xd1, 0xa0, 0x16, 0x1a, 0xf7, 0xe1, 0xea, 0x54, 0x46,
+	0x4b, 0x94, 0xea, 0x3c, 0x11, 0x1e, 0x80, 0xf5, 0x22, 0x4a, 0xa5, 0x16, 0x22, 0x7f, 0xd9, 0xe3,
+	0x6f, 0x67, 0x4a, 0x60, 0x70, 0x18, 0x74, 0xbe, 0x28, 0xbd, 0x05, 0xf6, 0x22, 0x4a, 0xa5, 0x72,
+	0x4d, 0xcf, 0xf4, 0x2f, 0xdf, 0x76, 0x02, 0xfd, 0xc1, 0x07, 0x95, 0x46, 0xb8, 0x7f, 0xc8, 0x1f,
+	0xc0, 0xb5, 0xfd, 0x32, 0xa6, 0x12, 0xcf, 0x7c, 0xa1, 0x31, 0xd0, 0xe3, 0xd6, 0x13, 0x8a, 0x2e,
+	0x74, 0x9b, 0xe1, 0x0d, 0x41, 0xa7, 0xfc, 0x11, 0x0c, 0x9f, 0x0a, 0x19, 0xd7, 0x88, 0x16, 0xd7,
+	0xe5, 0x13, 0xb8, 0xf1, 0x47, 0x7f, 0x1b, 0x91, 0xf1, 0xdd, 0xd5, 0x86, 0x19, 0xeb, 0x0d, 0x33,
+	0x76, 0x1b, 0x46, 0x3e, 0x97, 0x8c, 0x7c, 0x2d, 0x19, 0xf9, 0x56, 0x32, 0xb2, 0x2a, 0x19, 0xf9,
+	0x5e, 0x32, 0xf2, 0xa3, 0x64, 0xc6, 0xae, 0x64, 0xe4, 0xcb, 0x96, 0x19, 0xab, 0x2d, 0x33, 0xd6,
+	0x5b, 0x66, 0xbc, 0xbe, 0xa8, 0xff, 0x25, 0x77, 0x7e, 0x06, 0x00, 0x00, 0xff, 0xff, 0xd1, 0xfb,
+	0x47, 0x60, 0x59, 0x04, 0x00, 0x00,
 }
 
 func (this *HelloWorld) Equal(that interface{}) bool {
@@ -819,6 +980,12 @@ func (this *CreateResponse) Equal(that interface{}) bool {
 	} else if this == nil {
 		return false
 	}
+	if this.Id != that1.Id {
+		return false
+	}
+	if this.Token != that1.Token {
+		return false
+	}
 	return true
 }
 func (this *SearchRequest) Equal(that interface{}) bool {
@@ -838,6 +1005,12 @@ func (this *SearchRequest) Equal(that interface{}) bool {
 	if that1 == nil {
 		return this == nil
 	} else if this == nil {
+		return false
+	}
+	if this.Id != that1.Id {
+		return false
+	}
+	if this.Token != that1.Token {
 		return false
 	}
 	if this.Key != that1.Key {
@@ -862,6 +1035,9 @@ func (this *SearchResponse) Equal(that interface{}) bool {
 	if that1 == nil {
 		return this == nil
 	} else if this == nil {
+		return false
+	}
+	if this.Code != that1.Code {
 		return false
 	}
 	if this.Value != that1.Value {
@@ -979,6 +1155,9 @@ func (this *DeleteResponse) Equal(that interface{}) bool {
 	if that1 == nil {
 		return this == nil
 	} else if this == nil {
+		return false
+	}
+	if this.Code != that1.Code {
 		return false
 	}
 	if this.Result != that1.Result {
@@ -1121,7 +1300,64 @@ func (this *DeleteTreeResponse) Equal(that interface{}) bool {
 	} else if this == nil {
 		return false
 	}
-	if this.Result != that1.Result {
+	if this.Code != that1.Code {
+		return false
+	}
+	if this.Message != that1.Message {
+		return false
+	}
+	return true
+}
+func (this *ForceTreeDeleteRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*ForceTreeDeleteRequest)
+	if !ok {
+		that2, ok := that.(ForceTreeDeleteRequest)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Id != that1.Id {
+		return false
+	}
+	if this.Token != that1.Token {
+		return false
+	}
+	return true
+}
+func (this *ForceTreeDeleteResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*ForceTreeDeleteResponse)
+	if !ok {
+		that2, ok := that.(ForceTreeDeleteResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Code != that1.Code {
+		return false
+	}
+	if this.Message != that1.Message {
 		return false
 	}
 	return true
@@ -1149,8 +1385,10 @@ func (this *CreateResponse) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 4)
+	s := make([]string, 0, 6)
 	s = append(s, "&messages.CreateResponse{")
+	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
+	s = append(s, "Token: "+fmt.Sprintf("%#v", this.Token)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -1158,8 +1396,10 @@ func (this *SearchRequest) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 5)
+	s := make([]string, 0, 7)
 	s = append(s, "&messages.SearchRequest{")
+	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
+	s = append(s, "Token: "+fmt.Sprintf("%#v", this.Token)+",\n")
 	s = append(s, "Key: "+fmt.Sprintf("%#v", this.Key)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
@@ -1168,8 +1408,9 @@ func (this *SearchResponse) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 5)
+	s := make([]string, 0, 6)
 	s = append(s, "&messages.SearchResponse{")
+	s = append(s, "Code: "+fmt.Sprintf("%#v", this.Code)+",\n")
 	s = append(s, "Value: "+fmt.Sprintf("%#v", this.Value)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
@@ -1215,8 +1456,9 @@ func (this *DeleteResponse) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 5)
+	s := make([]string, 0, 6)
 	s = append(s, "&messages.DeleteResponse{")
+	s = append(s, "Code: "+fmt.Sprintf("%#v", this.Code)+",\n")
 	s = append(s, "Result: "+fmt.Sprintf("%#v", this.Result)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
@@ -1272,9 +1514,32 @@ func (this *DeleteTreeResponse) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 5)
+	s := make([]string, 0, 6)
 	s = append(s, "&messages.DeleteTreeResponse{")
-	s = append(s, "Result: "+fmt.Sprintf("%#v", this.Result)+",\n")
+	s = append(s, "Code: "+fmt.Sprintf("%#v", this.Code)+",\n")
+	s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *ForceTreeDeleteRequest) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&messages.ForceTreeDeleteRequest{")
+	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
+	s = append(s, "Token: "+fmt.Sprintf("%#v", this.Token)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *ForceTreeDeleteResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&messages.ForceTreeDeleteResponse{")
+	s = append(s, "Code: "+fmt.Sprintf("%#v", this.Code)+",\n")
+	s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -1357,6 +1622,18 @@ func (m *CreateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.Token) > 0 {
+		i -= len(m.Token)
+		copy(dAtA[i:], m.Token)
+		i = encodeVarintTree(dAtA, i, uint64(len(m.Token)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Id != 0 {
+		i = encodeVarintTree(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x8
+	}
 	return len(dAtA) - i, nil
 }
 
@@ -1384,6 +1661,18 @@ func (m *SearchRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintTree(dAtA, i, uint64(m.Key))
 		i--
 		dAtA[i] = 0x18
+	}
+	if len(m.Token) > 0 {
+		i -= len(m.Token)
+		copy(dAtA[i:], m.Token)
+		i = encodeVarintTree(dAtA, i, uint64(len(m.Token)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Id != 0 {
+		i = encodeVarintTree(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -1413,7 +1702,12 @@ func (m *SearchResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.Value)
 		i = encodeVarintTree(dAtA, i, uint64(len(m.Value)))
 		i--
-		dAtA[i] = 0xa
+		dAtA[i] = 0x12
+	}
+	if m.Code != 0 {
+		i = encodeVarintTree(dAtA, i, uint64(m.Code))
+		i--
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -1575,7 +1869,12 @@ func (m *DeleteResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.Result)
 		i = encodeVarintTree(dAtA, i, uint64(len(m.Result)))
 		i--
-		dAtA[i] = 0xa
+		dAtA[i] = 0x12
+	}
+	if m.Code != 0 {
+		i = encodeVarintTree(dAtA, i, uint64(m.Code))
+		i--
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -1754,12 +2053,87 @@ func (m *DeleteTreeResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Result) > 0 {
-		i -= len(m.Result)
-		copy(dAtA[i:], m.Result)
-		i = encodeVarintTree(dAtA, i, uint64(len(m.Result)))
+	if len(m.Message) > 0 {
+		i -= len(m.Message)
+		copy(dAtA[i:], m.Message)
+		i = encodeVarintTree(dAtA, i, uint64(len(m.Message)))
 		i--
-		dAtA[i] = 0xa
+		dAtA[i] = 0x12
+	}
+	if m.Code != 0 {
+		i = encodeVarintTree(dAtA, i, uint64(m.Code))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *ForceTreeDeleteRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ForceTreeDeleteRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ForceTreeDeleteRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Token) > 0 {
+		i -= len(m.Token)
+		copy(dAtA[i:], m.Token)
+		i = encodeVarintTree(dAtA, i, uint64(len(m.Token)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Id != 0 {
+		i = encodeVarintTree(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *ForceTreeDeleteResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ForceTreeDeleteResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ForceTreeDeleteResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Message) > 0 {
+		i -= len(m.Message)
+		copy(dAtA[i:], m.Message)
+		i = encodeVarintTree(dAtA, i, uint64(len(m.Message)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Code != 0 {
+		i = encodeVarintTree(dAtA, i, uint64(m.Code))
+		i--
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -1802,6 +2176,13 @@ func (m *CreateResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
+	if m.Id != 0 {
+		n += 1 + sovTree(uint64(m.Id))
+	}
+	l = len(m.Token)
+	if l > 0 {
+		n += 1 + l + sovTree(uint64(l))
+	}
 	return n
 }
 
@@ -1811,6 +2192,13 @@ func (m *SearchRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
+	if m.Id != 0 {
+		n += 1 + sovTree(uint64(m.Id))
+	}
+	l = len(m.Token)
+	if l > 0 {
+		n += 1 + l + sovTree(uint64(l))
+	}
 	if m.Key != 0 {
 		n += 1 + sovTree(uint64(m.Key))
 	}
@@ -1823,6 +2211,9 @@ func (m *SearchResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
+	if m.Code != 0 {
+		n += 1 + sovTree(uint64(m.Code))
+	}
 	l = len(m.Value)
 	if l > 0 {
 		n += 1 + l + sovTree(uint64(l))
@@ -1897,6 +2288,9 @@ func (m *DeleteResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
+	if m.Code != 0 {
+		n += 1 + sovTree(uint64(m.Code))
+	}
 	l = len(m.Result)
 	if l > 0 {
 		n += 1 + l + sovTree(uint64(l))
@@ -1980,7 +2374,42 @@ func (m *DeleteTreeResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Result)
+	if m.Code != 0 {
+		n += 1 + sovTree(uint64(m.Code))
+	}
+	l = len(m.Message)
+	if l > 0 {
+		n += 1 + l + sovTree(uint64(l))
+	}
+	return n
+}
+
+func (m *ForceTreeDeleteRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Id != 0 {
+		n += 1 + sovTree(uint64(m.Id))
+	}
+	l = len(m.Token)
+	if l > 0 {
+		n += 1 + l + sovTree(uint64(l))
+	}
+	return n
+}
+
+func (m *ForceTreeDeleteResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Code != 0 {
+		n += 1 + sovTree(uint64(m.Code))
+	}
+	l = len(m.Message)
 	if l > 0 {
 		n += 1 + l + sovTree(uint64(l))
 	}
@@ -2017,6 +2446,8 @@ func (this *CreateResponse) String() string {
 		return "nil"
 	}
 	s := strings.Join([]string{`&CreateResponse{`,
+		`Id:` + fmt.Sprintf("%v", this.Id) + `,`,
+		`Token:` + fmt.Sprintf("%v", this.Token) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -2026,6 +2457,8 @@ func (this *SearchRequest) String() string {
 		return "nil"
 	}
 	s := strings.Join([]string{`&SearchRequest{`,
+		`Id:` + fmt.Sprintf("%v", this.Id) + `,`,
+		`Token:` + fmt.Sprintf("%v", this.Token) + `,`,
 		`Key:` + fmt.Sprintf("%v", this.Key) + `,`,
 		`}`,
 	}, "")
@@ -2036,6 +2469,7 @@ func (this *SearchResponse) String() string {
 		return "nil"
 	}
 	s := strings.Join([]string{`&SearchResponse{`,
+		`Code:` + fmt.Sprintf("%v", this.Code) + `,`,
 		`Value:` + fmt.Sprintf("%v", this.Value) + `,`,
 		`}`,
 	}, "")
@@ -2083,6 +2517,7 @@ func (this *DeleteResponse) String() string {
 		return "nil"
 	}
 	s := strings.Join([]string{`&DeleteResponse{`,
+		`Code:` + fmt.Sprintf("%v", this.Code) + `,`,
 		`Result:` + fmt.Sprintf("%v", this.Result) + `,`,
 		`}`,
 	}, "")
@@ -2143,7 +2578,30 @@ func (this *DeleteTreeResponse) String() string {
 		return "nil"
 	}
 	s := strings.Join([]string{`&DeleteTreeResponse{`,
-		`Result:` + fmt.Sprintf("%v", this.Result) + `,`,
+		`Code:` + fmt.Sprintf("%v", this.Code) + `,`,
+		`Message:` + fmt.Sprintf("%v", this.Message) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *ForceTreeDeleteRequest) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&ForceTreeDeleteRequest{`,
+		`Id:` + fmt.Sprintf("%v", this.Id) + `,`,
+		`Token:` + fmt.Sprintf("%v", this.Token) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *ForceTreeDeleteResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&ForceTreeDeleteResponse{`,
+		`Code:` + fmt.Sprintf("%v", this.Code) + `,`,
+		`Message:` + fmt.Sprintf("%v", this.Message) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -2310,6 +2768,57 @@ func (m *CreateResponse) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: CreateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTree
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Token", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTree
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTree
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTree
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Token = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTree(dAtA[iNdEx:])
@@ -2363,6 +2872,57 @@ func (m *SearchRequest) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: SearchRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTree
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Token", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTree
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTree
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTree
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Token = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Key", wireType)
@@ -2436,6 +2996,25 @@ func (m *SearchResponse) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Code", wireType)
+			}
+			m.Code = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTree
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Code |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
 			}
@@ -2923,6 +3502,25 @@ func (m *DeleteResponse) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Code", wireType)
+			}
+			m.Code = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTree
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Code |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Result", wireType)
 			}
@@ -3458,8 +4056,27 @@ func (m *DeleteTreeResponse) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Code", wireType)
+			}
+			m.Code = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTree
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Code |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Result", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Message", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -3487,7 +4104,215 @@ func (m *DeleteTreeResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Result = string(dAtA[iNdEx:postIndex])
+			m.Message = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTree(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTree
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTree
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ForceTreeDeleteRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTree
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ForceTreeDeleteRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ForceTreeDeleteRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTree
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Token", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTree
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTree
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTree
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Token = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTree(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTree
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTree
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ForceTreeDeleteResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTree
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ForceTreeDeleteResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ForceTreeDeleteResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Code", wireType)
+			}
+			m.Code = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTree
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Code |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Message", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTree
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTree
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTree
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Message = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

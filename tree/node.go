@@ -1,4 +1,4 @@
-package main
+package tree
 
 import (
 	"fmt"
@@ -10,40 +10,40 @@ import (
 	"time"
 )
 
-type Note struct {
-	left		*actor.PID
-	right		*actor.PID
-	isLeaf		bool
-	maxSize 	int32
-	maxLeft 	int32
-	keyValues 	map[int32]string
+type Node struct {
+	left      *actor.PID
+	right     *actor.PID
+	IsLeaf    bool
+	MaxSize   int32
+	MaxLeft   int32
+	KeyValues map[int32]string
 }
 
-func (node Note) Receive(context actor.Context) {
+func (node Node) Receive(context actor.Context) {
 	switch msg := context.Message().(type) {
 
 	// Insert ----------------------------------------------------------------------------------------------------------
 	case *messages.InsertRequest:
-		if node.isLeaf {
+		if node.IsLeaf {
 			// Insert the key value pair
-			node.keyValues[msg.Key] = msg.Value
+			node.KeyValues[msg.Key] = msg.Value
 			// If leaf is full, split leaf
-			if int32(len(node.keyValues)) > node.maxLeft {
+			if int32(len(node.KeyValues)) > node.MaxLeft {
 				// No leaf anymore
-				node.isLeaf = false
+				node.IsLeaf = false
 				// Create two leafs
 				props := actor.PropsFromProducer(func() actor.Actor {
-					return &Node{maxSize: node.maxSize, isLeaf: true, key_values: make(map[int32]string)}
+					return &Node{MaxSize: node.MaxSize, IsLeaf: true, key_values: make(map[int32]string)}
 				})
 				node.left = context.Spawn(props)
 				node.right = context.Spawn(props)
-				middle := int(math.Ceil(float64(len(node.keyValues)) / 2.0))
+				middle := int(math.Ceil(float64(len(node.KeyValues)) / 2.0))
 				var keys []int
-				for k := range node.keyValues {
+				for k := range node.KeyValues {
 					keys = append(keys, int(k))
 				}
 				sort.Ints(keys)
-				node.maxLeft = int32(keys[middle-1])
+				node.MaxLeft = int32(keys[middle-1])
 
 				for i, k := range keys {
 
@@ -51,7 +51,7 @@ func (node Note) Receive(context actor.Context) {
 						Id:    msg.Id,
 						Token: msg.Token,
 						Key:   int32(k),
-						Value: node.keyValues[int32(k)],
+						Value: node.KeyValues[int32(k)],
 					}
 
 					if k == int(msg.Key) {
@@ -66,7 +66,7 @@ func (node Note) Receive(context actor.Context) {
 					}
 				}
 				// Delete map because no leaf anymore
-				node.keyValues = nil
+				node.KeyValues = nil
 
 				// If not full, send response
 			} else if msg.Success {
@@ -79,7 +79,7 @@ func (node Note) Receive(context actor.Context) {
 			}
 			// If node, send request to the proper leaf
 		} else {
-			if msg.Key > node.maxLeft {
+			if msg.Key > node.MaxLeft {
 				context.RequestWithCustomSender(node.right, msg, context.Sender())
 			} else {
 				context.RequestWithCustomSender(node.left, msg, context.Sender())
@@ -88,8 +88,8 @@ func (node Note) Receive(context actor.Context) {
 
 	// Search ----------------------------------------------------------------------------------------------------------
 	case *messages.SearchRequest:
-		if node.isLeaf {
-			value := node.keyValues[msg.Key]
+		if node.IsLeaf {
+			value := node.KeyValues[msg.Key]
 			var message string
 			if value != "" {
 				message = fmt.Sprintf("Value found: {key: %d, value: %s}", msg.Key, value)
@@ -102,7 +102,7 @@ func (node Note) Receive(context actor.Context) {
 				Result: message,
 			})
 		} else {
-			if msg.Key > node.maxLeft {
+			if msg.Key > node.MaxLeft {
 				context.RequestWithCustomSender(node.right, msg, context.Sender())
 			} else {
 				context.RequestWithCustomSender(node.left, msg, context.Sender())
@@ -111,11 +111,11 @@ func (node Note) Receive(context actor.Context) {
 
 	// Delete ----------------------------------------------------------------------------------------------------------
 	case *messages.DeleteRequest:
-		if node.isLeaf {
-			value := node.keyValues[msg.Key]
+		if node.IsLeaf {
+			value := node.KeyValues[msg.Key]
 			var message string
 			if value != "" {
-				delete(node.keyValues, msg.Key)
+				delete(node.KeyValues, msg.Key)
 				message = fmt.Sprintf("Pair {key: %d, value: %s} deleted", msg.Key, value)
 			} else {
 				message = fmt.Sprintf("Key %d does not exist", msg.Key)
@@ -126,7 +126,7 @@ func (node Note) Receive(context actor.Context) {
 				Result: message,
 			})
 		} else {
-			if msg.Key > node.maxLeft {
+			if msg.Key > node.MaxLeft {
 				context.RequestWithCustomSender(node.right, msg, context.Sender())
 			} else {
 				context.RequestWithCustomSender(node.left, msg, context.Sender())
@@ -136,7 +136,7 @@ func (node Note) Receive(context actor.Context) {
 	// Traverse	--------------------------------------------------------------------------------------------------------
 	case *messages.TraverseRequest:
 		// If it's a Node send the traverse request to the leafs and wait for their responses
-		if !node.isLeaf {
+		if !node.IsLeaf {
 			// Send messages to leafs and set the future timeout to 5 seconds
 			leftFuture := context.RequestFuture(node.left, msg, 5*time.Second)
 			rightFuture := context.RequestFuture(node.right, msg, 5*time.Second)
@@ -201,19 +201,19 @@ func (node Note) Receive(context actor.Context) {
 				Pairs:	pairs,
 			})
 		} else {
-			// sorting pairs by keys if isLeaf
+			// sorting pairs by keys if IsLeaf
 
 			var keysInt []int
 			pairs := make([]*messages.Pair, 0)
 
-			for k := range node.keyValues {
+			for k := range node.KeyValues {
 				keysInt = append(keysInt, int(k))
 			}
 
 			sort.Ints(keysInt)
 
 			for _, k := range keysInt {
-				pairs = append(pairs, &messages.Pair{Key: int32(k), Value: node.keyValues[int32(k)]})
+				pairs = append(pairs, &messages.Pair{Key: int32(k), Value: node.KeyValues[int32(k)]})
 			}
 
 			context.Respond(&messages.TraverseResponse{
