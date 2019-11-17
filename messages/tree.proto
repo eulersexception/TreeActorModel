@@ -3,34 +3,65 @@ package messages;
 
 message HelloWorld {}
 
-message Create {
+message CreateRequest {
     int32 size = 1;
 }
 
-message Search {
+message CreateResponse {
+}
+
+message SearchRequest {
+    int32 key = 3;
+}
+
+message SearchResponse {
+    string value = 1;
+}
+
+message InsertRequest {
+    int32 id = 1;
+    string token = 2;
+    int32 key = 3;
+    string value = 4;
+    bool success = 5;
+}
+
+message InsertResponse {
+    int32 code = 1;
+    string result = 2;
+}
+
+message DeleteRequest {
     int32 id = 1;
     string token = 2;
     int32 key = 3;
 }
 
-message Insert {
-    int32 id = 1;
-    string token = 2;
-    int32 value = 3;
+message DeleteResponse {
+    string result = 1;
 }
 
-message Delete {
-    int32 id = 1;
-    string token = 2;
-    int32 key = 3;
-}
-
-message Traverse {
+message TraverseRequest {
     int32 id = 1;
     string token = 2;
 }
 
-message DelTree {
+message Pair {
+    int32 key = 1;
+    string value = 2;
+}
+
+message TraverseResponse {
+    int32 code = 1;
+    string result = 2;
+    repeated Pair pairs = 3;
+}
+
+message DeleteTreeRequest {
     int32 id = 1;
     string token = 2;
+}
+
+message DeleteTreeResponse {
+    string result = 1;
 }
