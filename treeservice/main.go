@@ -50,13 +50,14 @@ func (server *Server) Receive(c actor.Context) {
 	switch msg := c.Message().(type) {
 	case *messages.CreateRequest:
 		idx, tokenx := createIDAndToken()
-
 		props := actor.PropsFromProducer(func() actor.Actor {
 
 			return &tree.Node{MaxSize: msg.Size_, IsLeaf: true, KeyValues: make(map[int32]string)}
 		})
+
 		pid := c.Spawn(props)
 		server.trees = append(server.trees, Tree{idx, tokenx, pid})
+
 		c.Respond(&messages.CreateResponse{
 			Id:    idx,
 			Token: tokenx,
@@ -131,7 +132,9 @@ func (server *Server) Receive(c actor.Context) {
 
 func main() {
 	var wg sync.WaitGroup
+
 	wg.Add(1)
+
 	defer wg.Wait()
 
 	flagBind := flag.String("bind", "localhost:8091", "Bind to address")

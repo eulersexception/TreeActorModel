@@ -86,8 +86,7 @@ func (node Node) Receive(context actor.Context) {
 			} else {
 				context.RequestWithCustomSender(node.left, msg, context.Sender())
 			}
-		}
-	// Search ----------------------------------------------------------------------------------------------------------
+		} // Search ----------------------------------------------------------------------------------------------------------
 	case *messages.SearchRequest:
 		if node.IsLeaf {
 			value := node.KeyValues[msg.Key]
@@ -112,9 +111,7 @@ func (node Node) Receive(context actor.Context) {
 			} else {
 				context.RequestWithCustomSender(node.left, msg, context.Sender())
 			}
-		}
-
-	// Delete ----------------------------------------------------------------------------------------------------------
+		} // Delete ----------------------------------------------------------------------------------------------------------
 	case *messages.DeleteRequest:
 		if node.IsLeaf {
 			value := node.KeyValues[msg.Key]
@@ -127,7 +124,9 @@ func (node Node) Receive(context actor.Context) {
 			} else {
 				message = fmt.Sprintf("Key %d does not exist", msg.Key)
 			}
+
 			log.Println(message)
+
 			context.Respond(&messages.InsertResponse{
 				Code:   200,
 				Result: message,
@@ -138,9 +137,7 @@ func (node Node) Receive(context actor.Context) {
 			} else {
 				context.RequestWithCustomSender(node.left, msg, context.Sender())
 			}
-		}
-
-	// Traverse	--------------------------------------------------------------------------------------------------------
+		} // Traverse	--------------------------------------------------------------------------------------------------------
 	case *messages.TraverseRequest:
 		// If it's a Node send the traverse request to the leafs and wait for their responses
 		if !node.IsLeaf {
