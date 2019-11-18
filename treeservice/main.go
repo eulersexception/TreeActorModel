@@ -67,7 +67,7 @@ func (server *Server) Receive(c actor.Context) {
 		if err != nil {
 			c.Respond(&messages.DeleteTreeResponse{Code: 404, Message: err.Error()})
 		} else {
-			force := "Trigger \"ForceTreeDeleteRequest\" to delete tree ultimately - take care... "
+			force := "Trigger \"forcetreedelete\" to delete tree permanently - take care... "
 			c.Respond(&messages.DeleteTreeResponse{Code: 200, Message: force})
 		}
 	case *messages.ForceTreeDeleteRequest:

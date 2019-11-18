@@ -21,16 +21,15 @@ type Node struct {
 
 func (node Node) Receive(context actor.Context) {
 	switch msg := context.Message().(type) {
-	// Insert ----------------------------------------------------------------------------------------------------------
 	case *messages.InsertRequest:
 		if node.IsLeaf {
-			// Insert the key value pair
+
 			node.KeyValues[msg.Key] = msg.Value
-			// If leaf is full, split leaf
+
 			if int32(len(node.KeyValues)) > node.MaxLeft {
-				// No leaf anymore
+
 				node.IsLeaf = false
-				// Create two leafs
+
 				props := actor.PropsFromProducer(func() actor.Actor {
 					return &Node{MaxSize: node.MaxSize, IsLeaf: true, KeyValues: make(map[int32]string)}
 				})
@@ -71,22 +70,22 @@ func (node Node) Receive(context actor.Context) {
 					}
 				}
 				// Delete map because no leaf anymore
-				node.KeyValues = nil // If not full, send response
-			} else if msg.Success {
+				node.KeyValues = nil
+			} else if msg.Success { // If not full, send response
 				message := fmt.Sprintf("Insertion completed: {key: %d, value: %s}", msg.Key, msg.Value)
 				log.Println(message)
 				context.Respond(&messages.InsertResponse{
 					Code:   200,
 					Result: message,
 				})
-			} // If node, send request to the proper leaf
-		} else {
+			}
+		} else { // If node, send request to the proper leaf
 			if msg.Key > node.MaxLeft {
 				context.RequestWithCustomSender(node.right, msg, context.Sender())
 			} else {
 				context.RequestWithCustomSender(node.left, msg, context.Sender())
 			}
-		} // Search ----------------------------------------------------------------------------------------------------------
+		}
 	case *messages.SearchRequest:
 		if node.IsLeaf {
 			value := node.KeyValues[msg.Key]
@@ -111,7 +110,7 @@ func (node Node) Receive(context actor.Context) {
 			} else {
 				context.RequestWithCustomSender(node.left, msg, context.Sender())
 			}
-		} // Delete ----------------------------------------------------------------------------------------------------------
+		}
 	case *messages.DeleteRequest:
 		if node.IsLeaf {
 			value := node.KeyValues[msg.Key]
@@ -137,7 +136,7 @@ func (node Node) Receive(context actor.Context) {
 			} else {
 				context.RequestWithCustomSender(node.left, msg, context.Sender())
 			}
-		} // Traverse	--------------------------------------------------------------------------------------------------------
+		}
 	case *messages.TraverseRequest:
 		// If it's a Node send the traverse request to the leafs and wait for their responses
 		if !node.IsLeaf {
