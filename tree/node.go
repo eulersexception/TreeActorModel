@@ -21,7 +21,6 @@ type Node struct {
 
 func (node Node) Receive(context actor.Context) {
 	switch msg := context.Message().(type) {
-
 	// Insert ----------------------------------------------------------------------------------------------------------
 	case *messages.InsertRequest:
 		if node.IsLeaf {
@@ -35,10 +34,12 @@ func (node Node) Receive(context actor.Context) {
 				props := actor.PropsFromProducer(func() actor.Actor {
 					return &Node{MaxSize: node.MaxSize, IsLeaf: true, KeyValues: make(map[int32]string)}
 				})
+
 				node.left = context.Spawn(props)
 				node.right = context.Spawn(props)
 				middle := int(math.Ceil(float64(len(node.KeyValues)) / 2.0))
 				var keys []int
+
 				for k := range node.KeyValues {
 					keys = append(keys, int(k))
 				}
@@ -46,7 +47,6 @@ func (node Node) Receive(context actor.Context) {
 				node.MaxLeft = int32(keys[middle-1])
 
 				for i, k := range keys {
-
 					message := &messages.InsertRequest{
 						Id:    msg.Id,
 						Token: msg.Token,
@@ -114,6 +114,7 @@ func (node Node) Receive(context actor.Context) {
 		if node.IsLeaf {
 			value := node.KeyValues[msg.Key]
 			var message string
+
 			if value != "" {
 				delete(node.KeyValues, msg.Key)
 				message = fmt.Sprintf("Pair {key: %d, value: %s} deleted", msg.Key, value)
