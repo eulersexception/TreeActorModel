@@ -144,8 +144,8 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 	switch args[0] {
 	case newTree:
 		if argsLength == 2 {
-			maxLeafSize, err := strconv.Atoi(args[1])
-			if err != nil {
+			maxLeafSize, error := strconv.Atoi(args[1])
+			if error != nil {
 				err = fmt.Errorf("invalid input for <max number of key-value-pairs>: %s", args[1])
 			} else {
 				message = &messages.CreateRequest{Size_: int32(maxLeafSize)}
@@ -175,8 +175,8 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 		}
 	case insert:
 		if argsLength == 3 {
-			key, err := strconv.Atoi(args[1])
-			if err != nil {
+			key, error := strconv.Atoi(args[1])
+			if error != nil {
 				err = fmt.Errorf("invalid input for <key>: %s", args[1])
 				break
 			}
@@ -193,11 +193,12 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 		}
 	case search:
 		if argsLength == 2 {
-			key, err := strconv.Atoi(args[1])
-			if err != nil {
+			key, error := strconv.Atoi(args[1])
+			if error != nil {
 				err = fmt.Errorf("invalid input for <key>: %s", args[1])
 				break
 			}
+
 			if id != -1 && token != "" {
 				message = &messages.SearchRequest{Id: id, Token: token, Key: int32(key)}
 			} else {
@@ -208,9 +209,9 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 		}
 	case delete:
 		if argsLength == 2 {
-			key, err := strconv.Atoi(args[1])
+			key, error := strconv.Atoi(args[1])
 
-			if err != nil {
+			if error != nil {
 				err = fmt.Errorf("invalid input for <key>: %s", args[1])
 				break
 			}
@@ -225,7 +226,6 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 		}
 	case traverse:
 		if argsLength == 1 {
-
 			if id != -1 && token != "" {
 				message = &messages.TraverseRequest{Id: id, Token: token}
 			} else {
