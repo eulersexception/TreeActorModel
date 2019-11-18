@@ -6,7 +6,7 @@ import (
 	"log"
 	"math"
 	"sort"
-	"github.com/eulersexception/vss/blatt-3-suedachse/messages"
+	"github.com/ob-vss-ws19/blatt-3-suedachse/messages"
 	"time"
 )
 
