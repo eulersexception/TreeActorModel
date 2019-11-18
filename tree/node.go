@@ -33,7 +33,7 @@ func (node Node) Receive(context actor.Context) {
 				node.IsLeaf = false
 				// Create two leafs
 				props := actor.PropsFromProducer(func() actor.Actor {
-					return &Node{MaxSize: node.MaxSize, IsLeaf: true, key_values: make(map[int32]string)}
+					return &Node{MaxSize: node.MaxSize, IsLeaf: true, KeyValues: make(map[int32]string)}
 				})
 				node.left = context.Spawn(props)
 				node.right = context.Spawn(props)
