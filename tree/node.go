@@ -3,11 +3,10 @@ package tree
 import (
 	"fmt"
 	"github.com/AsynkronIT/protoactor-go/actor"
+	"github.com/ob-vss-ws19/blatt-3-suedachse/messages"
 	"log"
 	"math"
 	"sort"
-	"github.com/ob-vss-ws19/blatt-3-suedachse/messages"
-	"time"
 )
 
 type Node struct {
@@ -76,7 +75,7 @@ func (node Node) Receive(context actor.Context) {
 				message := fmt.Sprintf("Insertion completed: {key: %d, value: %s}", msg.Key, msg.Value)
 				log.Println(message)
 				context.Respond(&messages.InsertResponse{
-					Code:    200,
+					Code:   200,
 					Result: message,
 				})
 			}
@@ -104,7 +103,7 @@ func (node Node) Receive(context actor.Context) {
 			}
 			log.Println(message)
 			context.Respond(&messages.InsertResponse{
-				Code:    200,
+				Code:   200,
 				Result: message,
 			})
 		} else {
@@ -131,7 +130,7 @@ func (node Node) Receive(context actor.Context) {
 			}
 			log.Println(message)
 			context.Respond(&messages.InsertResponse{
-				Code:    200,
+				Code:   200,
 				Result: message,
 			})
 		} else {
@@ -155,9 +154,9 @@ func (node Node) Receive(context actor.Context) {
 
 			if errLeft != nil {
 				context.Respond(&messages.TraverseResponse{
-					Code:    500,
+					Code:   500,
 					Result: "Left leaf timed out",
-					Pairs:    nil,
+					Pairs:  nil,
 				})
 				log.Println("Left leaf timed out")
 
@@ -168,9 +167,9 @@ func (node Node) Receive(context actor.Context) {
 
 			if errRight != nil {
 				context.Respond(&messages.TraverseResponse{
-					Code:    500,
+					Code:   500,
 					Result: "Right leaf timed out",
-					Pairs:	nil,
+					Pairs:  nil,
 				})
 				log.Println("Right leaf timed out")
 
@@ -187,9 +186,9 @@ func (node Node) Receive(context actor.Context) {
 				}
 			default:
 				context.Respond(&messages.TraverseResponse{
-					Code:    500,
+					Code:   500,
 					Result: "invalid type",
-					Pairs:    nil,
+					Pairs:  nil,
 				})
 				log.Println("invalid type")
 			}
@@ -197,21 +196,21 @@ func (node Node) Receive(context actor.Context) {
 			switch res := rightResult.(type) {
 			case *messages.TraverseResponse:
 				for _, el := range res.Pairs {
-					pairs = append(pairs, &messages.Pair{Key:el.Key, Value: el.Value})
+					pairs = append(pairs, &messages.Pair{Key: el.Key, Value: el.Value})
 				}
 			default:
 				context.Respond(&messages.TraverseResponse{
-					Code:    500,
+					Code:   500,
 					Result: "invalid type",
-					Pairs:    nil,
+					Pairs:  nil,
 				})
 				log.Println("invalid type")
 			}
 
 			context.Respond(&messages.TraverseResponse{
-				Code:    200,
+				Code:   200,
 				Result: "OK",
-				Pairs:	pairs,
+				Pairs:  pairs,
 			})
 		} else {
 			// sorting pairs by keys if IsLeaf
@@ -230,9 +229,9 @@ func (node Node) Receive(context actor.Context) {
 			}
 
 			context.Respond(&messages.TraverseResponse{
-				Code:    200,
+				Code:   200,
 				Result: "OK",
-				Pairs:   pairs,
+				Pairs:  pairs,
 			})
 		}
 	default:

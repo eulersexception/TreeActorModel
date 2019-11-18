@@ -7,32 +7,32 @@ import (
 	"github.com/AsynkronIT/protoactor-go/actor"
 	"github.com/AsynkronIT/protoactor-go/log"
 	"github.com/AsynkronIT/protoactor-go/remote"
-	"github.com/ob-vss-ws19/blatt-3-suedachse/tree"
 	"github.com/ob-vss-ws19/blatt-3-suedachse/messages"
+	"github.com/ob-vss-ws19/blatt-3-suedachse/tree"
 	"math/rand"
 	"sync"
 	"time"
 )
 
 type Tree struct {
-	id 		int32
-	token 	string
-	root 	*actor.PID
+	id    int32
+	token string
+	root  *actor.PID
 }
 
 type Server struct {
-	trees 	[]Tree
+	trees []Tree
 }
 
 func createIDAndToken() (int32, string) {
 	rand.Seed(time.Now().UnixNano())
 	id := rand.Int31n(10000000)
-	token := "Node_created_at_"+time.Now().String()
+	token := "Node_created_at_" + time.Now().String()
 
 	return id, token
 }
 
-func(server Server) getTree(id int32, token string) (Tree, error) {
+func (server Server) getTree(id int32, token string) (Tree, error) {
 	for _, v := range server.trees {
 		if v.id == id {
 			if v.token == token {
@@ -46,7 +46,7 @@ func(server Server) getTree(id int32, token string) (Tree, error) {
 	return Tree{}, errors.New("no tree with given ID")
 }
 
-func(server *Server) Receive(c actor.Context) {
+func (server *Server) Receive(c actor.Context) {
 	switch msg := c.Message().(type) {
 	case *messages.CreateRequest:
 		idx, tokenx := createIDAndToken()
@@ -58,8 +58,8 @@ func(server *Server) Receive(c actor.Context) {
 		pid := c.Spawn(props)
 		server.trees = append(server.trees, Tree{idx, tokenx, pid})
 		c.Respond(&messages.CreateResponse{
-			Id:		idx,
-			Token:  tokenx,
+			Id:    idx,
+			Token: tokenx,
 		})
 
 	case *messages.DeleteTreeRequest:
@@ -78,8 +78,8 @@ func(server *Server) Receive(c actor.Context) {
 		if err != nil {
 			c.Respond(&messages.ForceTreeDeleteResponse{Code: 404, Message: err.Error()})
 		} else {
-			for i:=0; i<len(server.trees); i++ {
-				if(server.trees[i] == tree) {
+			for i := 0; i < len(server.trees); i++ {
+				if server.trees[i] == tree {
 					server.trees = append(server.trees[:i], server.trees[i+1:]...)
 
 					break
