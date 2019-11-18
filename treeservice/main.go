@@ -28,6 +28,7 @@ func createIDAndToken() (int32, string) {
 	rand.Seed(time.Now().UnixNano())
 	id := rand.Int31n(10000000)
 	token := "Node_created_at_"+time.Now().String()
+
 	return id, token
 }
 
@@ -37,9 +38,11 @@ func(server Server) getTree(id int32, token string) (Tree, error) {
 			if v.token == token {
 				return v, nil
 			}
+
 			return Tree{}, errors.New("token mismatch")
 		}
 	}
+
 	return Tree{}, errors.New("no tree with given ID")
 }
 
@@ -49,6 +52,7 @@ func(server *Server) Receive(c actor.Context) {
 		idx, tokenx := createIDAndToken()
 
 		props := actor.PropsFromProducer(func() actor.Actor {
+
 			return &tree.Node{MaxSize: msg.Size_, IsLeaf: true, KeyValues: make(map[int32]string)}
 		})
 		pid := c.Spawn(props)
@@ -77,6 +81,7 @@ func(server *Server) Receive(c actor.Context) {
 			for i:=0; i<len(server.trees); i++ {
 				if(server.trees[i] == tree) {
 					server.trees = append(server.trees[:i], server.trees[i+1:]...)
+
 					break
 				}
 			}
@@ -95,6 +100,7 @@ func(server *Server) Receive(c actor.Context) {
 
 	case *messages.SearchRequest:
 		tree, err := server.getTree(msg.Id, msg.Token)
+
 		if err != nil {
 			c.Respond(&messages.SearchResponse{Code: 404, Value: err.Error()})
 		} else {
@@ -103,6 +109,7 @@ func(server *Server) Receive(c actor.Context) {
 
 	case *messages.DeleteRequest:
 		tree, err := server.getTree(msg.Id, msg.Token)
+
 		if err != nil {
 			c.Respond(&messages.DeleteResponse{Code: 404, Result: err.Error()})
 		} else {
@@ -111,6 +118,7 @@ func(server *Server) Receive(c actor.Context) {
 
 	case *messages.TraverseRequest:
 		tree, err := server.getTree(msg.Id, msg.Token)
+
 		if err != nil {
 			c.Respond(&messages.TraverseResponse{Code: 404, Result: err.Error()})
 		} else {

@@ -37,13 +37,16 @@ func (node Node) Receive(context actor.Context) {
 
 				node.left = context.Spawn(props)
 				node.right = context.Spawn(props)
+
 				middle := int(math.Ceil(float64(len(node.KeyValues)) / 2.0))
+
 				var keys []int
 
 				for k := range node.KeyValues {
 					keys = append(keys, int(k))
 				}
 				sort.Ints(keys)
+
 				node.MaxLeft = int32(keys[middle-1])
 
 				for i, k := range keys {
@@ -89,8 +92,11 @@ func (node Node) Receive(context actor.Context) {
 	// Search ----------------------------------------------------------------------------------------------------------
 	case *messages.SearchRequest:
 		if node.IsLeaf {
+
 			value := node.KeyValues[msg.Key]
+
 			var message string
+
 			if value != "" {
 				message = fmt.Sprintf("Value found: {key: %d, value: %s}", msg.Key, value)
 			} else {
@@ -112,7 +118,9 @@ func (node Node) Receive(context actor.Context) {
 	// Delete ----------------------------------------------------------------------------------------------------------
 	case *messages.DeleteRequest:
 		if node.IsLeaf {
+
 			value := node.KeyValues[msg.Key]
+
 			var message string
 
 			if value != "" {
@@ -152,9 +160,12 @@ func (node Node) Receive(context actor.Context) {
 					Pairs:    nil,
 				})
 				log.Println("Left leaf timed out")
+
 				break
 			}
+
 			rightResult, errRight := rightFuture.Result()
+
 			if errRight != nil {
 				context.Respond(&messages.TraverseResponse{
 					Code:    500,
@@ -162,6 +173,7 @@ func (node Node) Receive(context actor.Context) {
 					Pairs:	nil,
 				})
 				log.Println("Right leaf timed out")
+
 				break
 			}
 
@@ -203,8 +215,8 @@ func (node Node) Receive(context actor.Context) {
 			})
 		} else {
 			// sorting pairs by keys if IsLeaf
-
 			var keysInt []int
+
 			pairs := make([]*messages.Pair, 0)
 
 			for k := range node.KeyValues {
