@@ -4,14 +4,14 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"math/rand"
+	"sync"
+	"time"
 	"github.com/AsynkronIT/protoactor-go/actor"
 	"github.com/AsynkronIT/protoactor-go/log"
 	"github.com/AsynkronIT/protoactor-go/remote"
 	"github.com/ob-vss-ws19/blatt-3-suedachse/messages"
 	"github.com/ob-vss-ws19/blatt-3-suedachse/tree"
-	"math/rand"
-	"sync"
-	"time"
 )
 
 type Tree struct {
@@ -62,7 +62,6 @@ func (server *Server) Receive(c actor.Context) {
 			Id:    idx,
 			Token: tokenx,
 		})
-
 	case *messages.DeleteTreeRequest:
 		_, err := server.getTree(msg.Id, msg.Token)
 
@@ -72,7 +71,6 @@ func (server *Server) Receive(c actor.Context) {
 			force := "Trigger \"ForceTreeDeleteRequest\" to delete tree ultimately - take care... "
 			c.Respond(&messages.DeleteTreeResponse{Code: 200, Message: force})
 		}
-
 	case *messages.ForceTreeDeleteRequest:
 		tree, err := server.getTree(msg.Id, msg.Token)
 
@@ -89,7 +87,6 @@ func (server *Server) Receive(c actor.Context) {
 			message := "Tree delete successfully"
 			c.Respond(&messages.ForceTreeDeleteResponse{Code: 200, Message: message})
 		}
-
 	case *messages.InsertRequest:
 		tree, err := server.getTree(msg.Id, msg.Token)
 
@@ -98,7 +95,6 @@ func (server *Server) Receive(c actor.Context) {
 		} else {
 			c.RequestWithCustomSender(tree.root, msg, c.Sender())
 		}
-
 	case *messages.SearchRequest:
 		tree, err := server.getTree(msg.Id, msg.Token)
 
@@ -107,7 +103,6 @@ func (server *Server) Receive(c actor.Context) {
 		} else {
 			c.RequestWithCustomSender(tree.root, msg, c.Sender())
 		}
-
 	case *messages.DeleteRequest:
 		tree, err := server.getTree(msg.Id, msg.Token)
 
@@ -116,7 +111,6 @@ func (server *Server) Receive(c actor.Context) {
 		} else {
 			c.RequestWithCustomSender(tree.root, msg, c.Sender())
 		}
-
 	case *messages.TraverseRequest:
 		tree, err := server.getTree(msg.Id, msg.Token)
 
@@ -125,7 +119,6 @@ func (server *Server) Receive(c actor.Context) {
 		} else {
 			c.RequestWithCustomSender(tree.root, msg, c.Sender())
 		}
-
 	default:
 	}
 }

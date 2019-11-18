@@ -2,12 +2,12 @@ package tree
 
 import (
 	"fmt"
-	"github.com/AsynkronIT/protoactor-go/actor"
-	"github.com/ob-vss-ws19/blatt-3-suedachse/messages"
 	"log"
 	"math"
 	"sort"
 	"time"
+	"github.com/AsynkronIT/protoactor-go/actor"
+	"github.com/ob-vss-ws19/blatt-3-suedachse/messages"
 )
 
 type Node struct {
