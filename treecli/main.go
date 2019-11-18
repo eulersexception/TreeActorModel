@@ -20,7 +20,7 @@ type Client struct {
 func (state *Client) Receive(context actor.Context) {
 	switch msg := context.Message().(type) {
 	case *messages.CreateResponse:
-		fmt.Printf("Tree created! Id =  %V, token = %v\n", msg.GetId(), msg.GetToken())
+		fmt.Printf("Tree created! Id =  %v, token = %v\n", msg.GetId(), msg.GetToken())
 		state.wg.Done()
 	case *messages.DeleteTreeResponse:
 		fmt.Printf("Response code %v - tree deletion alert. %v\n", msg.GetCode(), msg.GetMessage())
@@ -43,6 +43,7 @@ func (state *Client) Receive(context actor.Context) {
 		for k, v := range msg.GetPairs() {
 			fmt.Printf("{keys: %v, values: %v}\n", k, v)
 		}
+
 		state.wg.Done()
 	default:
 	}
@@ -74,6 +75,7 @@ func main() {
 		logError(err)
 		return
 	}
+
 	if message == nil {
 		printHelp()
 		return
@@ -82,7 +84,9 @@ func main() {
 	remote.SetLogLevel(log.ErrorLevel)
 
 	remote.Start(*flagBind)
+
 	var wg sync.WaitGroup
+
 	props := actor.PropsFromProducer(func() actor.Actor {
 		wg.Add(1)
 		return &Client{0, &wg}
@@ -125,7 +129,7 @@ func printHelp() {
 }
 
 func logError(err error) {
-	fmt.Printf("An error occured - %s", err.Error())
+	fmt.Printf("An error ocured - %s", err.Error())
 }
 
 func getMessage(id int32, token string, args []string) (message interface{}, err error) {
@@ -176,6 +180,7 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 				err = fmt.Errorf("invalid input for <key>: %s", args[1])
 				break
 			}
+
 			value := args[2]
 
 			if id != -1 && token != "" {
@@ -204,10 +209,12 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 	case delete:
 		if argsLength == 2 {
 			key, err := strconv.Atoi(args[1])
+
 			if err != nil {
 				err = fmt.Errorf("invalid input for <key>: %s", args[1])
 				break
 			}
+
 			if id != -1 && token != "" {
 				message = &messages.DeleteRequest{Id: id, Token: token, Key: int32(key)}
 			} else {
@@ -218,6 +225,7 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 		}
 	case traverse:
 		if argsLength == 1 {
+
 			if id != -1 && token != "" {
 				message = &messages.TraverseRequest{Id: id, Token: token}
 			} else {
@@ -229,5 +237,6 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 	default:
 		err = fmt.Errorf("invalid input: %v", args)
 	}
+
 	return message, err
 }

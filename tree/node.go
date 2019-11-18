@@ -23,11 +23,9 @@ func (node Node) Receive(context actor.Context) {
 	switch msg := context.Message().(type) {
 	case *messages.InsertRequest:
 		if node.IsLeaf {
-
 			node.KeyValues[msg.Key] = msg.Value
 
 			if int32(len(node.KeyValues)) > node.MaxLeft {
-
 				node.IsLeaf = false
 
 				props := actor.PropsFromProducer(func() actor.Actor {
