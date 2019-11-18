@@ -4,14 +4,14 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"math/rand"
-	"sync"
-	"time"
 	"github.com/AsynkronIT/protoactor-go/actor"
 	"github.com/AsynkronIT/protoactor-go/log"
 	"github.com/AsynkronIT/protoactor-go/remote"
 	"github.com/ob-vss-ws19/blatt-3-suedachse/messages"
 	"github.com/ob-vss-ws19/blatt-3-suedachse/tree"
+	"math/rand"
+	"sync"
+	"time"
 )
 
 type Tree struct {
@@ -51,7 +51,6 @@ func (server *Server) Receive(c actor.Context) {
 	case *messages.CreateRequest:
 		idx, tokenx := createIDAndToken()
 		props := actor.PropsFromProducer(func() actor.Actor {
-
 			return &tree.Node{MaxSize: msg.Size_, IsLeaf: true, KeyValues: make(map[int32]string)}
 		})
 
