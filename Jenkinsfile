@@ -18,15 +18,15 @@ pipeline {
             steps {
                 sh 'echo run tests...'
             }
-        }
+        }/*
         stage('Lint') {
             agent {
                 docker { image 'obraun/vss-protoactor-jenkins' }
             }
             steps {
-                //sh 'golangci-lint run --deadline 20m -D gofmt -D gocyclo'
+                sh 'golangci-lint run --deadline 20m -D gofmt -D gocyclo'
             }
-        }
+        }*/
         stage('Build Docker Image') {
             agent any
             steps {
