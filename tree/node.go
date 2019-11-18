@@ -45,6 +45,7 @@ func (node Node) Receive(context actor.Context) {
 				for k := range node.KeyValues {
 					keys = append(keys, int(k))
 				}
+
 				sort.Ints(keys)
 
 				node.MaxLeft = int32(keys[middle-1])
@@ -62,6 +63,7 @@ func (node Node) Receive(context actor.Context) {
 					} else {
 						message.Success = false
 					}
+
 					if i < middle {
 						context.RequestWithCustomSender(node.left, message, context.Sender())
 					} else {
@@ -69,9 +71,7 @@ func (node Node) Receive(context actor.Context) {
 					}
 				}
 				// Delete map because no leaf anymore
-				node.KeyValues = nil
-
-				// If not full, send response
+				node.KeyValues = nil // If not full, send response
 			} else if msg.Success {
 				message := fmt.Sprintf("Insertion completed: {key: %d, value: %s}", msg.Key, msg.Value)
 				log.Println(message)
@@ -79,8 +79,7 @@ func (node Node) Receive(context actor.Context) {
 					Code:   200,
 					Result: message,
 				})
-			}
-			// If node, send request to the proper leaf
+			} // If node, send request to the proper leaf
 		} else {
 			if msg.Key > node.MaxLeft {
 				context.RequestWithCustomSender(node.right, msg, context.Sender())
@@ -88,11 +87,9 @@ func (node Node) Receive(context actor.Context) {
 				context.RequestWithCustomSender(node.left, msg, context.Sender())
 			}
 		}
-
 	// Search ----------------------------------------------------------------------------------------------------------
 	case *messages.SearchRequest:
 		if node.IsLeaf {
-
 			value := node.KeyValues[msg.Key]
 
 			var message string
@@ -102,7 +99,9 @@ func (node Node) Receive(context actor.Context) {
 			} else {
 				message = fmt.Sprintf("Key %d does not exist", msg.Key)
 			}
+
 			log.Println(message)
+
 			context.Respond(&messages.InsertResponse{
 				Code:   200,
 				Result: message,
@@ -118,7 +117,6 @@ func (node Node) Receive(context actor.Context) {
 	// Delete ----------------------------------------------------------------------------------------------------------
 	case *messages.DeleteRequest:
 		if node.IsLeaf {
-
 			value := node.KeyValues[msg.Key]
 
 			var message string
