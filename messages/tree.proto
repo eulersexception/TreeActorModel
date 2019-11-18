@@ -80,3 +80,7 @@ message ForceTreeDeleteResponse {
     int32 code = 1;
     string message = 2;
 }
+
+message ErrorResponse {
+    string message = 1;
+}

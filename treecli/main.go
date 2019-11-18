@@ -133,9 +133,9 @@ func logError(err error) {
 }
 
 func getMessage(id int32, token string, args []string) (message interface{}, err error) {
-
 	argsLength := len(args)
-	message = nil
+	message = &messages.ErrorResponse{"too few arguments - check your command"}
+	wrongCredentials := fmt.Sprintf("Id = %v or token = %v invalid", id, token)
 
 	if argsLength == 0 {
 		return message, err
@@ -145,39 +145,32 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 	case newTree:
 		if argsLength == 2 {
 			maxLeafSize, error := strconv.Atoi(args[1])
-			if error != nil {
-				err = fmt.Errorf("invalid input for <max number of key-value-pairs>: %s", args[1])
-			} else {
+			if error == nil {
 				message = &messages.CreateRequest{Size_: int32(maxLeafSize)}
 			}
-		} else {
-			err = fmt.Errorf("invalid number of arguments for %s: %d", args[0], len(args))
 		}
 	case deleteTree:
 		if argsLength == 1 {
 			if id != -1 && token != "" {
 				message = &messages.DeleteTreeRequest{Id: id, Token: token}
 			} else {
-				err = fmt.Errorf("invalid id or token: ID (%d), Token (%s)", id, token)
+				message = &messages.ErrorResponse{wrongCredentials}
 			}
-		} else {
-			err = fmt.Errorf("invalid number of arguments for %s: %d", args[0], len(args))
 		}
 	case forceTreeDelete:
 		if argsLength == 1 {
 			if id != -1 && token != "" {
 				message = &messages.DeleteTreeRequest{Id: id, Token: token}
 			} else {
-				err = fmt.Errorf("invalid id or token: ID (%d), Token (%s)", id, token)
+				message = &messages.ErrorResponse{wrongCredentials}
 			}
-		} else {
-			err = fmt.Errorf("invalid number of arguments for %s: %d", args[0], len(args))
 		}
 	case insert:
 		if argsLength == 3 {
 			key, error := strconv.Atoi(args[1])
 			if error != nil {
-				err = fmt.Errorf("invalid input for <key>: %s", args[1])
+				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
+				message = &messages.ErrorResponse{response}
 				break
 			}
 
@@ -186,56 +179,48 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 			if id != -1 && token != "" {
 				message = &messages.InsertRequest{Id: id, Token: token, Key: int32(key), Value: value, Success: true}
 			} else {
-				err = fmt.Errorf("invalid id or token: ID (%d), Token (%s)", id, token)
+				message = messages.ErrorResponse{wrongCredentials}
 			}
-		} else {
-			err = fmt.Errorf("invalid number of arguments for %s: %d", args[0], len(args))
 		}
 	case search:
 		if argsLength == 2 {
 			key, error := strconv.Atoi(args[1])
 			if error != nil {
-				err = fmt.Errorf("invalid input for <key>: %s", args[1])
+				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
+				message = &messages.ErrorResponse{response}
 				break
 			}
 
 			if id != -1 && token != "" {
 				message = &messages.SearchRequest{Id: id, Token: token, Key: int32(key)}
 			} else {
-				err = fmt.Errorf("invalid id or token: ID (%d), Token (%s)", id, token)
-			}
-		} else {
-			err = fmt.Errorf("invalid number of arguments for %s: %d", args[0], len(args))
+				message = messages.ErrorResponse{wrongCredentials}			}
 		}
 	case delete:
 		if argsLength == 2 {
 			key, error := strconv.Atoi(args[1])
 
 			if error != nil {
-				err = fmt.Errorf("invalid input for <key>: %s", args[1])
+				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
+				message = &messages.ErrorResponse{response}
 				break
 			}
 
 			if id != -1 && token != "" {
 				message = &messages.DeleteRequest{Id: id, Token: token, Key: int32(key)}
 			} else {
-				err = fmt.Errorf("invalid id or token: ID (%d), Token (%s)", id, token)
+				message = messages.ErrorResponse{wrongCredentials}
 			}
-		} else {
-			err = fmt.Errorf("invalid number of arguments for %s: %d", args[0], len(args))
 		}
 	case traverse:
 		if argsLength == 1 {
 			if id != -1 && token != "" {
 				message = &messages.TraverseRequest{Id: id, Token: token}
 			} else {
-				err = fmt.Errorf("invalid id or token: ID (%d), Token (%s)", id, token)
+				message = messages.ErrorResponse{wrongCredentials}
 			}
-		} else {
-			err = fmt.Errorf("invalid number of arguments for %s: %d", args[0], len(args))
 		}
 	default:
-		err = fmt.Errorf("invalid input: %v", args)
 	}
 
 	return message, err
