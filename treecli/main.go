@@ -134,7 +134,7 @@ func logError(err error) {
 
 func getMessage(id int32, token string, args []string) (message interface{}, err error) {
 	argsLength := len(args)
-	message = &messages.ErrorResponse{"too few arguments - check your command"}
+	message = &messages.ErrorResponse{Message: "too few arguments - check your command"}
 	wrongCredentials := fmt.Sprintf("Id = %v or token = %v invalid", id, token)
 
 	if argsLength == 0 {
@@ -154,7 +154,7 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 			if id != -1 && token != "" {
 				message = &messages.DeleteTreeRequest{Id: id, Token: token}
 			} else {
-				message = &messages.ErrorResponse{wrongCredentials}
+				message = &messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
 	case forceTreeDelete:
@@ -162,7 +162,7 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 			if id != -1 && token != "" {
 				message = &messages.DeleteTreeRequest{Id: id, Token: token}
 			} else {
-				message = &messages.ErrorResponse{wrongCredentials}
+				message = &messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
 	case insert:
@@ -170,7 +170,8 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 			key, error := strconv.Atoi(args[1])
 			if error != nil {
 				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
-				message = &messages.ErrorResponse{response}
+				message = &messages.ErrorResponse{Message: response}
+
 				break
 			}
 
@@ -179,7 +180,7 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 			if id != -1 && token != "" {
 				message = &messages.InsertRequest{Id: id, Token: token, Key: int32(key), Value: value, Success: true}
 			} else {
-				message = messages.ErrorResponse{wrongCredentials}
+				message = messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
 	case search:
@@ -187,14 +188,16 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 			key, error := strconv.Atoi(args[1])
 			if error != nil {
 				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
-				message = &messages.ErrorResponse{response}
+				message = &messages.ErrorResponse{Message: response}
+
 				break
 			}
 
 			if id != -1 && token != "" {
 				message = &messages.SearchRequest{Id: id, Token: token, Key: int32(key)}
 			} else {
-				message = messages.ErrorResponse{wrongCredentials}			}
+				message = messages.ErrorResponse{Message: wrongCredentials}
+			}
 		}
 	case delete:
 		if argsLength == 2 {
@@ -202,14 +205,15 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 
 			if error != nil {
 				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
-				message = &messages.ErrorResponse{response}
+				message = &messages.ErrorResponse{Message: response}
+
 				break
 			}
 
 			if id != -1 && token != "" {
 				message = &messages.DeleteRequest{Id: id, Token: token, Key: int32(key)}
 			} else {
-				message = messages.ErrorResponse{wrongCredentials}
+				message = messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
 	case traverse:
@@ -217,7 +221,7 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 			if id != -1 && token != "" {
 				message = &messages.TraverseRequest{Id: id, Token: token}
 			} else {
-				message = messages.ErrorResponse{wrongCredentials}
+				message = messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
 	default:
