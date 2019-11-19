@@ -34,10 +34,11 @@ func createIDAndToken() (int32, string) {
 }
 
 func (server Server) getTree(id int32, token string) (Tree, error) {
-	debug(37, fmt.Sprintf("getTree(%v, %v) called"))
+	debug(37, fmt.Sprintf("getTree(%v, %v) called", id, token))
 	for _, v := range server.trees {
 		if v.id == id {
 			if v.token == token {
+				debug(41, fmt.Sprintf("returning from getTree() with %v", v.root.String()))
 				return v, nil
 			}
 			debug(43, "returning from getTree() with error")
@@ -146,7 +147,7 @@ func main() {
 
 	defer wg.Wait()
 
-	flagBind := flag.String("bind", "localhost:8091", "Bind to address")
+	flagBind := flag.String("bind", "127.0.0.1:8091", "Bind to address")
 	flag.Parse()
 
 	remote.SetLogLevel(log.ErrorLevel)
@@ -156,6 +157,4 @@ func main() {
 	}))
 
 	fmt.Println(" ----> TreeService up <-----")
-
-
 }

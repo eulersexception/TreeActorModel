@@ -22,26 +22,39 @@ func (state *Client) Receive(context actor.Context) {
 	switch msg := context.Message().(type) {
 	case *messages.CreateResponse:
 		fmt.Printf("Tree created! Id =  %v, token = %v\n", msg.GetId(), msg.GetToken())
+		defer state.wg.Done()
+		break
 	case *messages.DeleteTreeResponse:
 		fmt.Printf("Response code %v - tree deletion alert. %v\n", msg.GetCode(), msg.GetMessage())
+		defer state.wg.Done()
+		break
 	case *messages.ForceTreeDeleteResponse:
 		fmt.Printf("Response code %v - tree has been deleted. %v\n", msg.GetCode(), msg.GetMessage())
+		defer state.wg.Done()
+		break
 	case *messages.InsertResponse:
 		fmt.Printf("Response code for insertion %v - %v\n", msg.GetCode(), msg.GetResult())
+		defer state.wg.Done()
+		break
 	case *messages.SearchResponse:
 		fmt.Printf("Response code for search %v - value is %v\n", msg.GetCode(), msg.GetValue())
+		defer state.wg.Done()
+		break
 	case *messages.DeleteResponse:
 		fmt.Printf("Response code for deletion %v - %v\n", msg.GetCode(), msg.GetResult())
+		defer state.wg.Done()
+		break
 	case *messages.TraverseResponse:
 		fmt.Printf("Response code for traversion %v\n - %v\n", msg.GetCode(), msg.GetResult())
 
 		for k, v := range msg.GetPairs() {
 			fmt.Printf("{keys: %v, values: %v}\n", k, v)
 		}
-
+		defer state.wg.Done()
+		break
 	default:
+		defer state.wg.Done()
 	}
-	defer state.wg.Done()
 }
 
 const (
@@ -57,8 +70,8 @@ const (
 func main() {
 
 	debug(59, "Defining flags")
-	flagBind := flag.String("bind", "localhost:8090", "Bind to address")
-	flagRemote := flag.String("remote", "localhost:8091", "remote host:port")
+	flagBind := flag.String("bind", "127.0.0.1:8090", "Bind to address")
+	flagRemote := flag.String("remote", "127.0.0.1:8091", "remote host:port")
 	flagID := flag.Int("id", -1, "Tree id")
 	flagToken := flag.String("token", "", "Tree token")
 	debug(64, "Flags defined -- now parsing")
@@ -66,6 +79,7 @@ func main() {
 	debug(66, "flags parsed")
 
 	flagArgs := flag.Args()
+	debug(82, fmt.Sprintf("Args = %v", flagArgs))
 	message := getMessage(int32(*flagID), *flagToken, flagArgs)
 
 	if message == nil {
@@ -73,24 +87,24 @@ func main() {
 		return
 	}
 
-	debug(76, "starting Remote")
+	debug(90, "starting Remote")
 	//remote.SetLogLevel(log.ErrorLevel)
 	remote.Start(*flagBind)
 
 	var wg sync.WaitGroup
 
 	props := actor.PropsFromProducer(func() actor.Actor {
-		wg.Add(1)
+		wg.Add(2)
 		return &Client{0, &wg}
 	})
 	rootContext := actor.EmptyRootContext
 	pid := rootContext.Spawn(props)
-	debug(87, fmt.Sprintf("created props, spawned them, got PID = %v", pid))
+	debug(102, fmt.Sprintf("created props, spawned them, got PID = %s", pid))
 
 	pidResp, err := remote.SpawnNamed(*flagRemote, "remote", "treeservice", 5*time.Second)
 
-	//remote.Register("treecli", props)
-	debug(92, "registered Remote")
+	remote.Register("treecli", props)
+	debug(107, "registered Remote")
 
 	if err != nil {
 		fmt.Printf("Couldn't connect to %s\n", *flagRemote)
@@ -98,11 +112,11 @@ func main() {
 	}
 
 	remotePid := pidResp.Pid
-	debug(100, fmt.Sprintf("got Remote PID = %v", remotePid))
+	debug(115, fmt.Sprintf("got Remote PID = %s", remotePid))
 
 	rootContext.RequestWithCustomSender(remotePid, message, pid)
 
-	debug(104, fmt.Sprintf("Send message from PID %v to PID %v: \"%v\"", remotePid, pid, message))
+	debug(119, fmt.Sprintf("Send message from PID %s to PID %s: \"%s\"", remotePid, pid, message))
 
 	wg.Wait()
 }
@@ -146,7 +160,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 		return message
 	}
 
-	switch args[1] {
+	switch args[0] {
 	case newTree:
 		debug(150, "switched to case newTree")
 		if argsLength == 2 {
@@ -181,7 +195,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 			key, error := strconv.Atoi(args[1])
 			if error != nil {
 				debug(182, "preparing ErrorResponse")
-				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
+				response := fmt.Sprintf("invalid input for <key>: %d", args[1])
 				message = &messages.ErrorResponse{Message: response}
 
 				break
@@ -202,7 +216,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 			key, error := strconv.Atoi(args[1])
 			if error != nil {
 				debug(203, "preparing ErrorResponse")
-				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
+				response := fmt.Sprintf("invalid input for <key>: %d", args[1])
 				message = &messages.ErrorResponse{Message: response}
 
 				break
@@ -222,7 +236,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 
 			if error != nil {
 				debug(223, "preparing ErrorResponse")
-				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
+				response := fmt.Sprintf("invalid input for <key>: %d", args[1])
 				message = &messages.ErrorResponse{Message: response}
 
 				break

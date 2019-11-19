@@ -21,12 +21,14 @@ type Node struct {
 }
 
 func (node Node) Receive(context actor.Context) {
+	remote.Start("127.0.0.1:8092")
+	remoteActor := context.Sender()
 	switch msg := context.Message().(type) {
 	case *messages.InsertRequest:
 		if node.IsLeaf {
 			node.KeyValues[msg.Key] = msg.Value
 
-			if int32(len(node.KeyValues)) > node.MaxLeft {
+			if int32(len(node.KeyValues)) > node.MaxSize {
 				node.IsLeaf = false
 
 				props := actor.PropsFromProducer(func() actor.Actor {
@@ -63,23 +65,14 @@ func (node Node) Receive(context actor.Context) {
 					}
 
 					if i < middle {
-						context.RequestWithCustomSender(node.left, message, context.Sender())
+						context.RequestWithCustomSender(node.left, message, remoteActor)
 					} else {
-						context.RequestWithCustomSender(node.right, message, context.Sender())
+						context.RequestWithCustomSender(node.right, message, remoteActor)
 					}
 				}
 				// Delete map because no leaf anymore
 				node.KeyValues = nil
 			} else if msg.Success { // If not full, send response
-				remoteService := fmt.Sprintf("%s:%d", msg.Ip, msg.Port)
-				remoteActor, err := remote.SpawnNamed(remoteService, "child", "treeservice", 5*time.Second)
-
-				if err != nil {
-					panic(err)
-				}
-
-				remotePid := remoteActor.Pid
-
 				message := fmt.Sprintf("Insertion completed: {key: %d, value: %s}", msg.Key, msg.Value)
 
 				log.Println(message)
@@ -89,13 +82,13 @@ func (node Node) Receive(context actor.Context) {
 					Result: message,
 				}
 
-				context.Send(remotePid, response)
+				context.Send(remoteActor, response)
 			}
 		} else { // If node, send request to the proper leaf
 			if msg.Key > node.MaxLeft {
-				context.RequestWithCustomSender(node.right, msg, context.Sender())
+				context.RequestWithCustomSender(node.right, msg, remoteActor)
 			} else {
-				context.RequestWithCustomSender(node.left, msg, context.Sender())
+				context.RequestWithCustomSender(node.left, msg, remoteActor)
 			}
 		}
 	case *messages.SearchRequest:
@@ -104,17 +97,18 @@ func (node Node) Receive(context actor.Context) {
 
 			var message string
 
-			if value != "" {
-				message = fmt.Sprintf("Value found: {key: %d, value: %s}", msg.Key, value)
-			} else {
-				message = fmt.Sprintf("Key %d does not exist", msg.Key)
+			if value == "" {
+				context.Send(remoteActor, &messages.SearchResponse{
+					Code:500,
+					Value: fmt.Sprintf("Key %d does not exist", msg.Key),
+				})
 			}
 
 			log.Println(message)
 
-			context.Respond(&messages.InsertResponse{
+			context.Send(remoteActor, &messages.SearchResponse{
 				Code:   200,
-				Result: message,
+				Value: value,
 			})
 		} else {
 			if msg.Key > node.MaxLeft {
@@ -138,7 +132,7 @@ func (node Node) Receive(context actor.Context) {
 
 			log.Println(message)
 
-			context.Respond(&messages.InsertResponse{
+			context.Send(remoteActor, &messages.DeleteResponse{
 				Code:   200,
 				Result: message,
 			})
@@ -160,7 +154,7 @@ func (node Node) Receive(context actor.Context) {
 			leftResult, errLeft := leftFuture.Result()
 
 			if errLeft != nil {
-				context.Respond(&messages.TraverseResponse{
+				context.Send(remoteActor, &messages.TraverseResponse{
 					Code:   500,
 					Result: "Left leaf timed out",
 					Pairs:  nil,
@@ -173,7 +167,7 @@ func (node Node) Receive(context actor.Context) {
 			rightResult, errRight := rightFuture.Result()
 
 			if errRight != nil {
-				context.Respond(&messages.TraverseResponse{
+				context.Send(remoteActor, &messages.TraverseResponse{
 					Code:   500,
 					Result: "Right leaf timed out",
 					Pairs:  nil,
@@ -192,7 +186,7 @@ func (node Node) Receive(context actor.Context) {
 					pairs = append(pairs, &messages.Pair{Key: el.Key, Value: el.Value})
 				}
 			default:
-				context.Respond(&messages.TraverseResponse{
+				context.Send(remoteActor, &messages.TraverseResponse{
 					Code:   500,
 					Result: "invalid type",
 					Pairs:  nil,
@@ -206,7 +200,7 @@ func (node Node) Receive(context actor.Context) {
 					pairs = append(pairs, &messages.Pair{Key: el.Key, Value: el.Value})
 				}
 			default:
-				context.Respond(&messages.TraverseResponse{
+				context.Send(remoteActor, &messages.TraverseResponse{
 					Code:   500,
 					Result: "invalid type",
 					Pairs:  nil,
@@ -214,7 +208,7 @@ func (node Node) Receive(context actor.Context) {
 				log.Println("invalid type")
 			}
 
-			context.Respond(&messages.TraverseResponse{
+			context.Send(remoteActor, &messages.TraverseResponse{
 				Code:   200,
 				Result: "OK",
 				Pairs:  pairs,
@@ -235,7 +229,7 @@ func (node Node) Receive(context actor.Context) {
 				pairs = append(pairs, &messages.Pair{Key: int32(k), Value: node.KeyValues[int32(k)]})
 			}
 
-			context.Respond(&messages.TraverseResponse{
+			context.Send(remoteActor, &messages.TraverseResponse{
 				Code:   200,
 				Result: "OK",
 				Pairs:  pairs,
