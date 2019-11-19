@@ -69,12 +69,7 @@ func main() {
 
 	flagArgs := flag.Args()
 
-	message, err := getMessage(int32(*flagID), *flagToken, flagArgs)
-
-	if err != nil {
-		logError(err)
-		return
-	}
+	message := getMessage(int32(*flagID), *flagToken, flagArgs)
 
 	if message == nil {
 		printHelp()
@@ -132,13 +127,13 @@ func logError(err error) {
 	fmt.Printf("An error ocured - %s", err.Error())
 }
 
-func getMessage(id int32, token string, args []string) (message interface{}, err error) {
+func getMessage(id int32, token string, args []string) (message interface{}) {
 	argsLength := len(args)
 	message = &messages.ErrorResponse{Message: "too few arguments - check your command"}
 	wrongCredentials := fmt.Sprintf("Id = %v or token = %v invalid", id, token)
 
 	if argsLength == 0 {
-		return message, err
+		return message
 	}
 
 	switch args[0] {
@@ -227,5 +222,5 @@ func getMessage(id int32, token string, args []string) (message interface{}, err
 	default:
 	}
 
-	return message, err
+	return message
 }
