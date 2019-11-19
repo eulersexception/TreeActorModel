@@ -3,6 +3,7 @@ package tree
 import (
 	"fmt"
 	"github.com/AsynkronIT/protoactor-go/actor"
+	"github.com/AsynkronIT/protoactor-go/remote"
 	"github.com/ob-vss-ws19/blatt-3-suedachse/messages"
 	"log"
 	"math"
@@ -70,12 +71,25 @@ func (node Node) Receive(context actor.Context) {
 				// Delete map because no leaf anymore
 				node.KeyValues = nil
 			} else if msg.Success { // If not full, send response
+				remoteService := fmt.Sprintf("%s:%d", msg.Ip, msg.Port)
+				remoteActor, err := remote.SpawnNamed(remoteService, "child", "treecli", 5*time.Second)
+
+				if err != nil {
+					panic(err)
+				}
+
+				remotePid := remoteActor.Pid
+
 				message := fmt.Sprintf("Insertion completed: {key: %d, value: %s}", msg.Key, msg.Value)
+
 				log.Println(message)
-				context.Respond(&messages.InsertResponse{
+
+				response := &messages.InsertResponse{
 					Code:   200,
 					Result: message,
-				})
+				}
+
+				context.Send(remotePid, response)
 			}
 		} else { // If node, send request to the proper leaf
 			if msg.Key > node.MaxLeft {

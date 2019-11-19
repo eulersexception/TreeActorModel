@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/AsynkronIT/protoactor-go/actor"
-	"github.com/AsynkronIT/protoactor-go/log"
 	"github.com/AsynkronIT/protoactor-go/remote"
 	"github.com/ob-vss-ws19/blatt-3-suedachse/messages"
 	"strconv"
@@ -12,31 +11,27 @@ import (
 	"time"
 )
 
+
 type Client struct {
 	count int
 	wg    *sync.WaitGroup
 }
 
 func (state *Client) Receive(context actor.Context) {
+	debug(21, "called Receive()")
 	switch msg := context.Message().(type) {
 	case *messages.CreateResponse:
 		fmt.Printf("Tree created! Id =  %v, token = %v\n", msg.GetId(), msg.GetToken())
-		state.wg.Done()
 	case *messages.DeleteTreeResponse:
 		fmt.Printf("Response code %v - tree deletion alert. %v\n", msg.GetCode(), msg.GetMessage())
-		state.wg.Done()
 	case *messages.ForceTreeDeleteResponse:
 		fmt.Printf("Response code %v - tree has been deleted. %v\n", msg.GetCode(), msg.GetMessage())
-		state.wg.Done()
 	case *messages.InsertResponse:
 		fmt.Printf("Response code for insertion %v - %v\n", msg.GetCode(), msg.GetResult())
-		state.wg.Done()
 	case *messages.SearchResponse:
 		fmt.Printf("Response code for search %v - value is %v\n", msg.GetCode(), msg.GetValue())
-		state.wg.Done()
 	case *messages.DeleteResponse:
 		fmt.Printf("Response code for deletion %v - %v\n", msg.GetCode(), msg.GetResult())
-		state.wg.Done()
 	case *messages.TraverseResponse:
 		fmt.Printf("Response code for traversion %v\n - %v\n", msg.GetCode(), msg.GetResult())
 
@@ -44,9 +39,9 @@ func (state *Client) Receive(context actor.Context) {
 			fmt.Printf("{keys: %v, values: %v}\n", k, v)
 		}
 
-		state.wg.Done()
 	default:
 	}
+	defer state.wg.Done()
 }
 
 const (
@@ -60,15 +55,17 @@ const (
 )
 
 func main() {
-	flagBind := flag.String("bind", "localhost:8090", "Bind to address")
-	flagRemote := flag.String("remote", "localhost:8091", "remote host:port")
+
+	debug(59, "Defining flags")
+	flagBind := flag.String("bind", "localhost:18090", "Bind to address")
+	flagRemote := flag.String("remote", "localhost:18091", "remote host:port")
 	flagID := flag.Int("id", -1, "Tree id")
 	flagToken := flag.String("token", "", "Tree token")
-
+	debug(64, "Flags defined -- now parsing")
 	flag.Parse()
+	debug(66, "flags parsed")
 
 	flagArgs := flag.Args()
-
 	message := getMessage(int32(*flagID), *flagToken, flagArgs)
 
 	if message == nil {
@@ -76,8 +73,8 @@ func main() {
 		return
 	}
 
-	remote.SetLogLevel(log.ErrorLevel)
-
+	debug(76, "starting Remote")
+	//remote.SetLogLevel(log.ErrorLevel)
 	remote.Start(*flagBind)
 
 	var wg sync.WaitGroup
@@ -88,8 +85,12 @@ func main() {
 	})
 	rootContext := actor.EmptyRootContext
 	pid := rootContext.Spawn(props)
+	debug(87, fmt.Sprintf("created props, spawned them, got PID = %v", pid))
 
 	pidResp, err := remote.SpawnNamed(*flagRemote, "remote", "treeservice", 5*time.Second)
+
+	//remote.Register("treecli", props)
+	debug(92, "registered Remote")
 
 	if err != nil {
 		fmt.Printf("Couldn't connect to %s\n", *flagRemote)
@@ -97,8 +98,11 @@ func main() {
 	}
 
 	remotePid := pidResp.Pid
+	debug(100, fmt.Sprintf("got Remote PID = %v", remotePid))
 
 	rootContext.RequestWithCustomSender(remotePid, message, pid)
+
+	debug(104, fmt.Sprintf("Send message from PID %v to PID %v: \"%v\"", remotePid, pid, message))
 
 	wg.Wait()
 }
@@ -127,36 +131,48 @@ func logError(err error) {
 	fmt.Printf("An error ocured - %s", err.Error())
 }
 
+func debug(line int, info string) {
+	fmt.Printf("TreeCli :: Line %v  --> %v\n", line, info)
+}
+
 func getMessage(id int32, token string, args []string) (message interface{}) {
 	argsLength := len(args)
 	message = &messages.ErrorResponse{Message: "too few arguments - check your command"}
 	wrongCredentials := fmt.Sprintf("Id = %v or token = %v invalid", id, token)
 
+	debug(142, fmt.Sprintf("getMessage(%v, %v) with default message \"to few arguments\"", id, token))
+
 	if argsLength == 0 {
 		return message
 	}
 
-	switch args[0] {
+	switch args[1] {
 	case newTree:
+		debug(150, "switched to case newTree")
 		if argsLength == 2 {
 			maxLeafSize, error := strconv.Atoi(args[1])
 			if error == nil {
-				message = &messages.CreateRequest{Size_: int32(maxLeafSize)}
+				debug(154, "preparing CreateRequest")
+				message = &messages.CreateRequest{Code: int32(maxLeafSize)}
 			}
 		}
 	case deleteTree:
 		if argsLength == 1 {
 			if id != -1 && token != "" {
+				debug(161, "preparing DeleteRequest")
 				message = &messages.DeleteTreeRequest{Id: id, Token: token}
 			} else {
+				debug(164, "preparing ErrorResponse")
 				message = &messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
 	case forceTreeDelete:
 		if argsLength == 1 {
 			if id != -1 && token != "" {
-				message = &messages.DeleteTreeRequest{Id: id, Token: token}
+				debug(171, "preparing ForceTreeDeleteRequest")
+				message = &messages.ForceTreeDeleteRequest{Id: id, Token: token}
 			} else {
+				debug(174, "preparing ErrorResponse")
 				message = &messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
@@ -164,6 +180,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 		if argsLength == 3 {
 			key, error := strconv.Atoi(args[1])
 			if error != nil {
+				debug(182, "preparing ErrorResponse")
 				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
 				message = &messages.ErrorResponse{Message: response}
 
@@ -173,8 +190,10 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 			value := args[2]
 
 			if id != -1 && token != "" {
-				message = &messages.InsertRequest{Id: id, Token: token, Key: int32(key), Value: value, Success: true}
+				debug(192, "preparing InsertRequest")
+				message = &messages.InsertRequest{Id: id, Token: token, Key: int32(key), Value: value, Success: true, }
 			} else {
+				debug(195, "preparing ErrorResponse")
 				message = messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
@@ -182,6 +201,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 		if argsLength == 2 {
 			key, error := strconv.Atoi(args[1])
 			if error != nil {
+				debug(203, "preparing ErrorResponse")
 				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
 				message = &messages.ErrorResponse{Message: response}
 
@@ -189,8 +209,10 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 			}
 
 			if id != -1 && token != "" {
+				debug(211, "preparing SearchRequest")
 				message = &messages.SearchRequest{Id: id, Token: token, Key: int32(key)}
 			} else {
+				debug(214, "preparing ErrorResponse")
 				message = messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
@@ -199,6 +221,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 			key, error := strconv.Atoi(args[1])
 
 			if error != nil {
+				debug(223, "preparing ErrorResponse")
 				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
 				message = &messages.ErrorResponse{Message: response}
 
@@ -206,16 +229,20 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 			}
 
 			if id != -1 && token != "" {
+				debug(231, "preparing DeleteRequest")
 				message = &messages.DeleteRequest{Id: id, Token: token, Key: int32(key)}
 			} else {
+				debug(234, "preparing ErrorResponse")
 				message = messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
 	case traverse:
 		if argsLength == 1 {
 			if id != -1 && token != "" {
+				debug(241, "preparing TraverseRequest")
 				message = &messages.TraverseRequest{Id: id, Token: token}
 			} else {
+				debug(244, "preparing ErrorResponse")
 				message = messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}

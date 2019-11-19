@@ -2,7 +2,7 @@ syntax = "proto3";
 package messages;
 
 message CreateRequest {
-    int32 size = 1;
+    int32 code = 1;
 }
 
 message CreateResponse {
@@ -27,6 +27,8 @@ message InsertRequest {
     int32 key = 3;
     string value = 4;
     bool success = 5;
+    string ip = 6;
+    int32 port = 7;
 }
 
 message InsertResponse {
