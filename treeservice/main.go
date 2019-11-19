@@ -146,7 +146,7 @@ func main() {
 
 	defer wg.Wait()
 
-	flagBind := flag.String("bind", "localhost:18091", "Bind to address")
+	flagBind := flag.String("bind", "localhost:8091", "Bind to address")
 	flag.Parse()
 
 	remote.SetLogLevel(log.ErrorLevel)

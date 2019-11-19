@@ -72,7 +72,7 @@ func (node Node) Receive(context actor.Context) {
 				node.KeyValues = nil
 			} else if msg.Success { // If not full, send response
 				remoteService := fmt.Sprintf("%s:%d", msg.Ip, msg.Port)
-				remoteActor, err := remote.SpawnNamed(remoteService, "child", "treecli", 5*time.Second)
+				remoteActor, err := remote.SpawnNamed(remoteService, "child", "treeservice", 5*time.Second)
 
 				if err != nil {
 					panic(err)

@@ -57,8 +57,8 @@ const (
 func main() {
 
 	debug(59, "Defining flags")
-	flagBind := flag.String("bind", "localhost:18090", "Bind to address")
-	flagRemote := flag.String("remote", "localhost:18091", "remote host:port")
+	flagBind := flag.String("bind", "localhost:8090", "Bind to address")
+	flagRemote := flag.String("remote", "localhost:8091", "remote host:port")
 	flagID := flag.Int("id", -1, "Tree id")
 	flagToken := flag.String("token", "", "Tree token")
 	debug(64, "Flags defined -- now parsing")
