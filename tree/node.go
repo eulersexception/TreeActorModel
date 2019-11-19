@@ -72,7 +72,7 @@ func (node Node) Receive(context actor.Context) {
 				}
 				// Delete map because no leaf anymore
 				node.KeyValues = nil
-			} else if msg.Success { // If not full, send response
+			} else if int32(len(node.KeyValues)) <= node.MaxSize { // If not full, send response
 				message := fmt.Sprintf("Insertion completed: {key: %d, value: %s}", msg.Key, msg.Value)
 
 				log.Println(message)
