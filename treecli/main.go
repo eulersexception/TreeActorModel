@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	console "github.com/AsynkronIT/goconsole"
 	"github.com/AsynkronIT/protoactor-go/actor"
 	"github.com/AsynkronIT/protoactor-go/remote"
 	"github.com/ob-vss-ws19/blatt-3-suedachse/messages"
@@ -80,7 +81,7 @@ func main() {
 	var wg sync.WaitGroup
 
 	props := actor.PropsFromProducer(func() actor.Actor {
-		wg.Add(1)
+		wg.Add(10)
 		return &Client{0, &wg}
 	})
 	rootContext := actor.EmptyRootContext
@@ -103,7 +104,7 @@ func main() {
 	rootContext.RequestWithCustomSender(remotePid, message, pid)
 
 	debug(104, fmt.Sprintf("Send message from PID %v to PID %v: \"%v\"", remotePid, pid, message))
-
+	console.ReadLine()
 	wg.Wait()
 }
 
@@ -146,7 +147,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 		return message
 	}
 
-	switch args[1] {
+	switch args[0] {
 	case newTree:
 		debug(150, "switched to case newTree")
 		if argsLength == 2 {
