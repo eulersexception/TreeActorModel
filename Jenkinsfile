@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Build') {
             agent {
-                docker { image 'obraun/vss-protoactor-jenkins' }make
+                docker { image 'obraun/vss-protoactor-jenkins' }
             }
             steps {
                 sh 'cd messages && make regenerate'
