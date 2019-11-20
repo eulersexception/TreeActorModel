@@ -98,13 +98,13 @@ func main() {
 		return &Client{0, &wg}
 	})
 	rootContext := actor.EmptyRootContext
-	pid := rootContext.Spawn(props)
+	pid, _ := rootContext.SpawnNamed(props, "treecli")
 	debug(102, fmt.Sprintf("created props, spawned them, got PID = %s", pid))
-
-	pidResp, err := remote.SpawnNamed(*flagRemote, "remote", "treeservice", 5*time.Second)
 
 	remote.Register("treecli", props)
 	debug(107, "registered Remote")
+
+	pidResp, err := remote.SpawnNamed(*flagRemote, "remote", "treeservice", 5*time.Second)
 
 	if err != nil {
 		fmt.Printf("Couldn't connect to %s\n", *flagRemote)

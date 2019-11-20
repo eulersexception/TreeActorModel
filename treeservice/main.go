@@ -41,12 +41,12 @@ func (server Server) getTree(id int32, token string) (Tree, error) {
 				debug(41, fmt.Sprintf("returning from getTree() with %v", v.root.String()))
 				return v, nil
 			}
-			debug(43, "returning from getTree() with error")
+			debug(44, "returning from getTree() with error")
 			return Tree{}, errors.New("token mismatch")
 		}
 	}
 
-	debug(48, "returning from getTree() with error")
+	debug(49, "returning from getTree() with error")
 	return Tree{}, errors.New("no tree with given ID")
 }
 
@@ -58,7 +58,7 @@ func (server *Server) Receive(c actor.Context) {
 	debug(57, "called Receive()")
 	switch msg := c.Message().(type) {
 	case *messages.CreateRequest:
-		debug(59, "preparing CreateResponse")
+		debug(61, "preparing CreateResponse")
 		idx, tokenx := createIDAndToken()
 		props := actor.PropsFromProducer(func() actor.Actor {
 			return &tree.Node{MaxSize: msg.Code, IsLeaf: true, KeyValues: make(map[int32]string)}
@@ -73,7 +73,7 @@ func (server *Server) Receive(c actor.Context) {
 			Token: tokenx,
 		})
 	case *messages.DeleteTreeRequest:
-		debug(74, "preparing DeleteTreeResponse")
+		debug(76, "preparing DeleteTreeResponse")
 		_, err := server.getTree(msg.Id, msg.Token)
 
 		if err != nil {
@@ -83,7 +83,7 @@ func (server *Server) Receive(c actor.Context) {
 			c.Respond(&messages.DeleteTreeResponse{Code: 200, Message: force})
 		}
 	case *messages.ForceTreeDeleteRequest:
-		debug(84, "preparing ForceTreeDeleteResponse")
+		debug(86, "preparing ForceTreeDeleteResponse")
 		tree, err := server.getTree(msg.Id, msg.Token)
 
 		if err != nil {
@@ -100,7 +100,7 @@ func (server *Server) Receive(c actor.Context) {
 			c.Respond(&messages.ForceTreeDeleteResponse{Code: 200, Message: message})
 		}
 	case *messages.InsertRequest:
-		debug(101, "preparing InsertResponse")
+		debug(103, "preparing InsertResponse")
 		tree, err := server.getTree(msg.Id, msg.Token)
 
 		if err != nil {
@@ -109,7 +109,7 @@ func (server *Server) Receive(c actor.Context) {
 			c.RequestWithCustomSender(tree.root, msg, c.Sender())
 		}
 	case *messages.SearchRequest:
-		debug(110, "preparing SearchResponse")
+		debug(112, "preparing SearchResponse")
 		tree, err := server.getTree(msg.Id, msg.Token)
 
 		if err != nil {
@@ -118,7 +118,7 @@ func (server *Server) Receive(c actor.Context) {
 			c.RequestWithCustomSender(tree.root, msg, c.Sender())
 		}
 	case *messages.DeleteRequest:
-		debug(119, "preparing DeleteResponse")
+		debug(121, "preparing DeleteResponse")
 		tree, err := server.getTree(msg.Id, msg.Token)
 
 		if err != nil {
@@ -127,7 +127,7 @@ func (server *Server) Receive(c actor.Context) {
 			c.RequestWithCustomSender(tree.root, msg, c.Sender())
 		}
 	case *messages.TraverseRequest:
-		debug(128, "preparing TraverseResponse")
+		debug(130, "preparing TraverseResponse")
 		tree, err := server.getTree(msg.Id, msg.Token)
 
 		if err != nil {
