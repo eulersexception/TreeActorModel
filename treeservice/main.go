@@ -68,7 +68,7 @@ func (server *Server) Receive(c actor.Context) {
 		server.trees = append(server.trees, Tree{idx, tokenx, pid})
 
 		debug(68, "created tree and appended it to map - preparing CreateResponse")
-		c.Respond(&messages.CreateResponse{
+		c.Send(c.Sender(), &messages.CreateResponse{
 			Id:    idx,
 			Token: tokenx,
 		})
