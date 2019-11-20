@@ -3,7 +3,6 @@ package tree
 import (
 	"fmt"
 	"github.com/AsynkronIT/protoactor-go/actor"
-	"github.com/AsynkronIT/protoactor-go/remote"
 	"github.com/ob-vss-ws19/blatt-3-suedachse/messages"
 	"log"
 	"math"
@@ -21,7 +20,6 @@ type Node struct {
 }
 
 func (node Node) Receive(context actor.Context) {
-	remote.Start("127.0.0.1:8092")
 	remoteActor := context.Sender()
 	switch msg := context.Message().(type) {
 	case *messages.InsertRequest:
@@ -75,12 +73,17 @@ func (node Node) Receive(context actor.Context) {
 			} else if int32(len(node.KeyValues)) <= node.MaxSize { // If not full, send response
 				message := fmt.Sprintf("Insertion completed: {key: %d, value: %s}", msg.Key, msg.Value)
 
+				log.Println(context.Sender())
+				log.Println(context)
 				log.Println(message)
 
 				response := &messages.InsertResponse{
 					Code:   200,
 					Result: message,
 				}
+
+				//remote := actor.NewPID("127.0.0.1:8092", "InsertResponse")
+
 
 				context.Send(remoteActor, response)
 			}
@@ -112,9 +115,9 @@ func (node Node) Receive(context actor.Context) {
 			})
 		} else {
 			if msg.Key > node.MaxLeft {
-				context.RequestWithCustomSender(node.right, msg, context.Sender())
+				context.RequestWithCustomSender(node.right, msg, remoteActor)
 			} else {
-				context.RequestWithCustomSender(node.left, msg, context.Sender())
+				context.RequestWithCustomSender(node.left, msg, remoteActor)
 			}
 		}
 	case *messages.DeleteRequest:
@@ -138,9 +141,9 @@ func (node Node) Receive(context actor.Context) {
 			})
 		} else {
 			if msg.Key > node.MaxLeft {
-				context.RequestWithCustomSender(node.right, msg, context.Sender())
+				context.RequestWithCustomSender(node.right, msg, remoteActor)
 			} else {
-				context.RequestWithCustomSender(node.left, msg, context.Sender())
+				context.RequestWithCustomSender(node.left, msg, remoteActor)
 			}
 		}
 	case *messages.TraverseRequest:

@@ -116,7 +116,7 @@ func main() {
 
 	rootContext.RequestWithCustomSender(remotePid, message, pid)
 
-	debug(119, fmt.Sprintf("Send message from PID %s to PID %s: \"%s\"", remotePid, pid, message))
+	debug(119, fmt.Sprintf("Send message from treeservice PID %s to remote PID %s: \"%s\"", pid, remotePid, message))
 
 	wg.Wait()
 }
@@ -205,7 +205,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 
 			if id != -1 && token != "" {
 				debug(192, "preparing InsertRequest")
-				message = &messages.InsertRequest{Id: id, Token: token, Key: int32(key), Value: value, Success: true, }
+				message = &messages.InsertRequest{Id: id, Token: token, Key: int32(key), Value: value, Success: true, Ip: "127.0.0.1", Port: 8090  }
 			} else {
 				debug(195, "preparing ErrorResponse")
 				message = messages.ErrorResponse{Message: wrongCredentials}
