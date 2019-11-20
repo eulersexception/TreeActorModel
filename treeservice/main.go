@@ -92,8 +92,6 @@ func (server *Server) Receive(c actor.Context) {
 			for i := 0; i < len(server.trees); i++ {
 				if server.trees[i] == tree {
 					server.trees = append(server.trees[:i], server.trees[i+1:]...)
-
-					break
 				}
 			}
 			message := "Tree delete successfully"

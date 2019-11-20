@@ -24,6 +24,14 @@ func (node Node) Receive(context actor.Context) {
 	switch msg := context.Message().(type) {
 	case *messages.InsertRequest:
 		if node.IsLeaf {
+			message := fmt.Sprintf("Insertion completed: {key: %d, value: %s}", msg.Key, msg.Value)
+
+			response := &messages.InsertResponse{
+				Code:   200,
+				Result: message,
+			}
+
+			context.Send(remoteActor, response)
 			node.KeyValues[msg.Key] = msg.Value
 
 			if int32(len(node.KeyValues)) > node.MaxSize {
@@ -70,22 +78,6 @@ func (node Node) Receive(context actor.Context) {
 				}
 				// Delete map because no leaf anymore
 				node.KeyValues = nil
-			} else if int32(len(node.KeyValues)) <= node.MaxSize { // If not full, send response
-				message := fmt.Sprintf("Insertion completed: {key: %d, value: %s}", msg.Key, msg.Value)
-
-				log.Println(context.Sender())
-				log.Println(context)
-				log.Println(message)
-
-				response := &messages.InsertResponse{
-					Code:   200,
-					Result: message,
-				}
-
-				//remote := actor.NewPID("127.0.0.1:8092", "InsertResponse")
-
-
-				context.Send(remoteActor, response)
 			}
 		} else { // If node, send request to the proper leaf
 			if msg.Key > node.MaxLeft {
@@ -145,6 +137,13 @@ func (node Node) Receive(context actor.Context) {
 			} else {
 				context.RequestWithCustomSender(node.left, msg, remoteActor)
 			}
+		}
+	case *messages.ForceTreeDeleteRequest:
+		if !node.IsLeaf {
+			log.Printf("Line 148 :: Node :: killed leaf left = %v and leaf right = %v\n", node.left, node.right)
+			context.Stop(node.left)
+			context.Stop(node.right)
+			log.Println("killed both leafs")
 		}
 	case *messages.TraverseRequest:
 		// If it's a Node send the traverse request to the leafs and wait for their responses

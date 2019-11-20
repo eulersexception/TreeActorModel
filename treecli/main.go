@@ -6,6 +6,7 @@ import (
 	"github.com/AsynkronIT/protoactor-go/actor"
 	"github.com/AsynkronIT/protoactor-go/remote"
 	"github.com/ob-vss-ws19/blatt-3-suedachse/messages"
+	"log"
 	"strconv"
 	"sync"
 	"time"
@@ -22,27 +23,27 @@ func (state *Client) Receive(context actor.Context) {
 	switch msg := context.Message().(type) {
 	case *messages.CreateResponse:
 		fmt.Printf("Tree created! Id =  %v, token = %v\n", msg.GetId(), msg.GetToken())
-		state.wg.Done()
+		defer state.wg.Done()
 		break
 	case *messages.DeleteTreeResponse:
 		fmt.Printf("Response code %v - tree deletion alert. %v\n", msg.GetCode(), msg.GetMessage())
-		state.wg.Done()
+		defer state.wg.Done()
 		break
 	case *messages.ForceTreeDeleteResponse:
 		fmt.Printf("Response code %v - tree has been deleted. %v\n", msg.GetCode(), msg.GetMessage())
-		state.wg.Done()
+		defer state.wg.Done()
 		break
 	case *messages.InsertResponse:
 		fmt.Printf("Response code for insertion %v - %v\n", msg.GetCode(), msg.GetResult())
-		state.wg.Done()
+		defer state.wg.Done()
 		break
 	case *messages.SearchResponse:
 		fmt.Printf("Response code for search %v - value is %v\n", msg.GetCode(), msg.GetValue())
-		state.wg.Done()
+		defer state.wg.Done()
 		break
 	case *messages.DeleteResponse:
 		fmt.Printf("Response code for deletion %v - %v\n", msg.GetCode(), msg.GetResult())
-		state.wg.Done()
+		defer state.wg.Done()
 		break
 	case *messages.TraverseResponse:
 		fmt.Printf("Response code for traversion %v\n - %v\n", msg.GetCode(), msg.GetResult())
@@ -50,19 +51,17 @@ func (state *Client) Receive(context actor.Context) {
 		for k, v := range msg.GetPairs() {
 			fmt.Printf("{keys: %v, values: %v}\n", k, v)
 		}
-		state.wg.Done()
+		defer state.wg.Done()
 		break
 
 	default:
 	}
-	state.wg.Add(1)
-	state.wg.Done()
 }
 
 const (
 	newTree         = "newtree"
 	deleteTree      = "deletetree"
-	forceTreeDelete = "forTreeDelete"
+	forceTreeDelete = "forcetreedelete"
 	insert          = "insert"
 	search          = "search"
 	delete          = "delete"
@@ -94,9 +93,10 @@ func main() {
 	remote.Start(*flagBind)
 
 	var wg sync.WaitGroup
+	wg.Add(1)
 
+	log.Println(wg)
 	props := actor.PropsFromProducer(func() actor.Actor {
-		wg.Add(1)
 		return &Client{0, &wg}
 	})
 	rootContext := actor.EmptyRootContext
