@@ -6,7 +6,6 @@ import (
 	"github.com/AsynkronIT/protoactor-go/actor"
 	"github.com/AsynkronIT/protoactor-go/remote"
 	"github.com/ob-vss-ws19/blatt-3-suedachse/messages"
-	"log"
 	"strconv"
 	"sync"
 	"time"
@@ -87,13 +86,11 @@ func main() {
 	}
 
 	debug(77, "starting Remote")
-	//remote.SetLogLevel(log.ErrorLevel)
 	remote.Start(*flagBind)
 
 	var wg sync.WaitGroup
 	wg.Add(1)
 
-	log.Println(wg)
 	props := actor.PropsFromProducer(func() actor.Actor {
 		return &Client{0, &wg}
 	})
@@ -192,7 +189,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 			key, error := strconv.Atoi(args[1])
 			if error != nil {
 				debug(184, "preparing ErrorResponse")
-				response := fmt.Sprintf("invalid input for <key>: %d", args[1])
+				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
 				message = &messages.ErrorResponse{Message: response}
 
 				break
@@ -213,7 +210,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 			key, error := strconv.Atoi(args[1])
 			if error != nil {
 				debug(205, "preparing ErrorResponse")
-				response := fmt.Sprintf("invalid input for <key>: %d", args[1])
+				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
 				message = &messages.ErrorResponse{Message: response}
 
 				break
@@ -233,7 +230,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 
 			if error != nil {
 				debug(225, "preparing ErrorResponse")
-				response := fmt.Sprintf("invalid input for <key>: %d", args[1])
+				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
 				message = &messages.ErrorResponse{Message: response}
 
 				break
