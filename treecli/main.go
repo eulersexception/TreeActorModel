@@ -143,10 +143,6 @@ func printHelp() {
 	fmt.Print(help)
 }
 
-func logError(err error) {
-	fmt.Printf("An error ocured - %s", err.Error())
-}
-
 func debug(line int, info string) {
 	fmt.Printf("TreeCli :: Line %v  --> %v\n", line, info)
 }
