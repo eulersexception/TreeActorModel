@@ -137,7 +137,7 @@ Nach dem Start läuft der TreeService bis ihn der User mit der Tastenkombination
 
 ### TreeCli
 
-####  In <Klammern> angegebene Ausdrücke in den Befehlen vor der Ausführung entsprechend einsetzen. 
+####  In Klammern angegebene Ausdrücke in den Befehlen vor der Ausführung entsprechend einsetzen. 
 
 * Baum erzeugen:
 
