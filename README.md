@@ -120,9 +120,9 @@ Wenn Sie die Imagenamen oben (`treeservice` und `treecli`) durch die Namen aus d
 Registry ersetzen, können Sie Ihre Lösung mit den selben Kommandos wie oben beschrieben,
 ausprobieren.
 
-Um den Baum zu testen können einfach folgende Befehle eingegeben werden. Die fertigen Docker Images
-für den TreeService und die TreeCli werden dann gepulled und die Anwendung kann per Eingaben über die
-Kommandozeile genutzt werden.
+Um den Baum zu testen, können folgende Befehle eingegeben werden. Die fertigen Docker Images
+für den TreeService und die TreeCli werden dann gepulled und die Anwendung kann per Eingaben in die TreeCli
+über die Kommandozeile genutzt werden.
 
 ### TreeService
 
