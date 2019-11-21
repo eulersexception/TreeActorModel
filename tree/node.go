@@ -94,7 +94,7 @@ func (node Node) Receive(context actor.Context) {
 
 			if value == "" {
 				context.Send(remoteActor, &messages.SearchResponse{
-					Code:500,
+					Code:  500,
 					Value: fmt.Sprintf("Key %d does not exist", msg.Key),
 				})
 			}
@@ -102,7 +102,7 @@ func (node Node) Receive(context actor.Context) {
 			log.Println(message)
 
 			context.Send(remoteActor, &messages.SearchResponse{
-				Code:   200,
+				Code:  200,
 				Value: value,
 			})
 		} else {

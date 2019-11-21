@@ -12,10 +12,9 @@ import (
 	"time"
 )
 
-
 type Client struct {
-	count	int
-	wg		*sync.WaitGroup
+	count int
+	wg    *sync.WaitGroup
 }
 
 func (state *Client) Receive(context actor.Context) {
@@ -208,7 +207,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 
 			if id != -1 && token != "" {
 				debug(194, "preparing InsertRequest")
-				message = &messages.InsertRequest{Id: id, Token: token, Key: int32(key), Value: value, Success: true, Ip: "127.0.0.1", Port: 8090  }
+				message = &messages.InsertRequest{Id: id, Token: token, Key: int32(key), Value: value, Success: true, Ip: "127.0.0.1", Port: 8090}
 			} else {
 				debug(197, "preparing ErrorResponse")
 				message = messages.ErrorResponse{Message: wrongCredentials}
