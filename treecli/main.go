@@ -68,7 +68,6 @@ const (
 )
 
 func main() {
-
 	debug(59, "Defining flags")
 	flagBind := flag.String("bind", "127.0.0.1:8090", "Bind to address")
 	flagRemote := flag.String("remote", "127.0.0.1:8091", "remote host:port")
