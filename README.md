@@ -128,7 +128,8 @@ Kommandozeile genutzt werden.
 
 TreeService starten:
 
-```docker run --rm --net actors --name treeservice terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treeservice \
+```
+docker run --rm --net actors --name treeservice terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treeservice \
 --bind="treeservice.actors:8091"
 ```
 
@@ -140,35 +141,42 @@ Nach dem Start läuft der TreeService bis ihn der User mit der Tastenkombination
 
 * Baum erzeugen:
 
-```docker run --rm --net actors --name treecli terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treecli --bind="treecli.actors:8090" --remote="treeservice.actors:8091" newtree <int>
+```
+docker run --rm --net actors --name treecli terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treecli --bind="treecli.actors:8090" --remote="treeservice.actors:8091" newtree <int>
 ```
 
 * Schlüssel-Wert-Paar in Baum einfügen:
 
-```docker run --rm --net actors --name treecli terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treecli --bind="treecli.actors:8090" --remote="treeservice.actors:8091" --id=<Tree-ID> --token=<String> insert <int> <String>
+```
+docker run --rm --net actors --name treecli terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treecli --bind="treecli.actors:8090" --remote="treeservice.actors:8091" --id=<Tree-ID> --token=<String> insert <int> <String>
 ``` 
 
 * Wert mit Schlüssel suchen:
 
-```docker run --rm --net actors --name treecli terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treecli --bind="treecli.actors:8090" --remote="treeservice.actors:8091" --id=<Tree-ID> --token=<String> search <int>
+```
+docker run --rm --net actors --name treecli terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treecli --bind="treecli.actors:8090" --remote="treeservice.actors:8091" --id=<Tree-ID> --token=<String> search <int>
 ``` 
 
 * Wert mit Schlüssel löschen:
 
-```docker run --rm --net actors --name treecli terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treecli --bind="treecli.actors:8090" --remote="treeservice.actors:8091" --id=<Tree-ID> --token=<String> delete <int>
+```
+docker run --rm --net actors --name treecli terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treecli --bind="treecli.actors:8090" --remote="treeservice.actors:8091" --id=<Tree-ID> --token=<String> delete <int>
 ``` 
 
 * Alle Schlüssel-Wert-Paare eines Baums erhalten:
 
-```docker run --rm --net actors --name treecli terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treecli --bind="treecli.actors:8090" --remote="treeservice.actors:8091" --id=<Tree-ID> --token=<String> traverse
+```
+docker run --rm --net actors --name treecli terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treecli --bind="treecli.actors:8090" --remote="treeservice.actors:8091" --id=<Tree-ID> --token=<String> traverse
 ``` 
 
 * Einen Baum löschen:
 
-```docker run --rm --net actors --name treecli terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treecli --bind="treecli.actors:8090" --remote="treeservice.actors:8091" --id=<Tree-ID> --token=<String> deletetree
+```
+docker run --rm --net actors --name treecli terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treecli --bind="treecli.actors:8090" --remote="treeservice.actors:8091" --id=<Tree-ID> --token=<String> deletetree
 ``` 
 
 * Die Anfrage, um einen Baum zu löschen wird zwar bestätigt, aber nicht final ausgeführt, damit der User vor einer versehentlichen Löschung gewarnt ist. Der folgende Befehl löscht den Baum endgültig:
 
-```docker run --rm --net actors --name treecli terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treecli --bind="treecli.actors:8090" --remote="treeservice.actors:8091" --id=<Tree-ID> --token=<String> forcetreedelete
+```
+docker run --rm --net actors --name treecli terraform.cs.hm.edu:5043/ob-vss-ws19-blatt-3-suedachse:PR-8-treecli --bind="treecli.actors:8090" --remote="treeservice.actors:8091" --id=<Tree-ID> --token=<String> forcetreedelete
 ``` 
