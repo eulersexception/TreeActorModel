@@ -17,32 +17,26 @@ type Client struct {
 }
 
 func (state *Client) Receive(context actor.Context) {
-	debug(21, "called Receive()")
+	debug(20, "called Receive()")
 	switch msg := context.Message().(type) {
 	case *messages.CreateResponse:
 		fmt.Printf("Tree created! Id =  %v, token = %v\n", msg.GetId(), msg.GetToken())
 		defer state.wg.Done()
-		break
 	case *messages.DeleteTreeResponse:
 		fmt.Printf("Response code %v - tree deletion alert. %v\n", msg.GetCode(), msg.GetMessage())
 		defer state.wg.Done()
-		break
 	case *messages.ForceTreeDeleteResponse:
 		fmt.Printf("Response code %v - tree has been deleted. %v\n", msg.GetCode(), msg.GetMessage())
 		defer state.wg.Done()
-		break
 	case *messages.InsertResponse:
 		fmt.Printf("Response code for insertion %v - %v\n", msg.GetCode(), msg.GetResult())
 		defer state.wg.Done()
-		break
 	case *messages.SearchResponse:
 		fmt.Printf("Response code for search %v - value is %v\n", msg.GetCode(), msg.GetValue())
 		defer state.wg.Done()
-		break
 	case *messages.DeleteResponse:
 		fmt.Printf("Response code for deletion %v - %v\n", msg.GetCode(), msg.GetResult())
 		defer state.wg.Done()
-		break
 	case *messages.TraverseResponse:
 		fmt.Printf("Response code for traversion %v\n - %v\n", msg.GetCode(), msg.GetResult())
 
@@ -50,7 +44,6 @@ func (state *Client) Receive(context actor.Context) {
 			fmt.Printf("{keys: %v, values: %v}\n", k, v)
 		}
 		defer state.wg.Done()
-		break
 
 	default:
 	}
@@ -67,17 +60,17 @@ const (
 )
 
 func main() {
-	debug(59, "Defining flags")
+	debug(70, "Defining flags")
 	flagBind := flag.String("bind", "127.0.0.1:8090", "Bind to address")
 	flagRemote := flag.String("remote", "127.0.0.1:8091", "remote host:port")
 	flagID := flag.Int("id", -1, "Tree id")
 	flagToken := flag.String("token", "", "Tree token")
-	debug(64, "Flags defined -- now parsing")
+	debug(75, "Flags defined -- now parsing")
 	flag.Parse()
-	debug(66, "flags parsed")
+	debug(77, "flags parsed")
 
 	flagArgs := flag.Args()
-	debug(69, fmt.Sprintf("Args = %v", flagArgs))
+	debug(80, fmt.Sprintf("Args = %v", flagArgs))
 	message := getMessage(int32(*flagID), *flagToken, flagArgs)
 
 	if message == nil {
@@ -85,7 +78,7 @@ func main() {
 		return
 	}
 
-	debug(77, "starting Remote")
+	debug(88, "starting Remote")
 	remote.Start(*flagBind)
 
 	var wg sync.WaitGroup
@@ -96,10 +89,10 @@ func main() {
 	})
 	rootContext := actor.EmptyRootContext
 	pid, _ := rootContext.SpawnNamed(props, "treecli")
-	debug(88, fmt.Sprintf("created props, spawned them, got PID = %s", pid))
+	debug(99, fmt.Sprintf("created props, spawned them, got PID = %s", pid))
 
 	remote.Register("treecli", props)
-	debug(91, "registered Remote")
+	debug(102, "registered Remote")
 
 	pidResp, err := remote.SpawnNamed(*flagRemote, "remote", "treeservice", 5*time.Second)
 
@@ -109,12 +102,12 @@ func main() {
 	}
 
 	remotePid := pidResp.Pid
-	debug(101, fmt.Sprintf("got Remote PID = %s", remotePid))
+	debug(112, fmt.Sprintf("got Remote PID = %s", remotePid))
 
 	rootContext.RequestWithCustomSender(remotePid, message, pid)
 	//rootContext.RequestFuture(remotePid, message, 5*time.Second)
 
-	debug(106, fmt.Sprintf("Send message from treecli PID %s to treeservice PID %s: \"%s\"", pid, remotePid, message))
+	debug(117, fmt.Sprintf("Send message from treecli PID %s to treeservice PID %s: \"%s\"", pid, remotePid, message))
 
 	wg.Wait()
 }
@@ -148,7 +141,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 	message = &messages.ErrorResponse{Message: "too few arguments - check your command"}
 	wrongCredentials := fmt.Sprintf("Id = %v or token = %v invalid", id, token)
 
-	debug(144, fmt.Sprintf("getMessage(%v, %v) with default message \"to few arguments\"", id, token))
+	debug(151, fmt.Sprintf("getMessage(%v, %v) with default message \"to few arguments\"", id, token))
 
 	if argsLength == 0 {
 		return message
@@ -156,31 +149,31 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 
 	switch args[0] {
 	case newTree:
-		debug(152, "switched to case newTree")
+		debug(159, "switched to case newTree")
 		if argsLength == 2 {
 			maxLeafSize, error := strconv.Atoi(args[1])
 			if error == nil {
-				debug(156, "preparing CreateRequest")
+				debug(163, "preparing CreateRequest")
 				message = &messages.CreateRequest{Code: int32(maxLeafSize)}
 			}
 		}
 	case deleteTree:
 		if argsLength == 1 {
 			if id != -1 && token != "" {
-				debug(163, "preparing DeleteRequest")
+				debug(170, "preparing DeleteRequest")
 				message = &messages.DeleteTreeRequest{Id: id, Token: token}
 			} else {
-				debug(166, "preparing ErrorResponse")
+				debug(173, "preparing ErrorResponse")
 				message = &messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
 	case forceTreeDelete:
 		if argsLength == 1 {
 			if id != -1 && token != "" {
-				debug(173, "preparing ForceTreeDeleteRequest")
+				debug(180, "preparing ForceTreeDeleteRequest")
 				message = &messages.ForceTreeDeleteRequest{Id: id, Token: token}
 			} else {
-				debug(176, "preparing ErrorResponse")
+				debug(183, "preparing ErrorResponse")
 				message = &messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
@@ -188,7 +181,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 		if argsLength == 3 {
 			key, error := strconv.Atoi(args[1])
 			if error != nil {
-				debug(184, "preparing ErrorResponse")
+				debug(191, "preparing ErrorResponse")
 				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
 				message = &messages.ErrorResponse{Message: response}
 
@@ -198,10 +191,10 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 			value := args[2]
 
 			if id != -1 && token != "" {
-				debug(194, "preparing InsertRequest")
+				debug(201, "preparing InsertRequest")
 				message = &messages.InsertRequest{Id: id, Token: token, Key: int32(key), Value: value, Success: true, Ip: "127.0.0.1", Port: 8090}
 			} else {
-				debug(197, "preparing ErrorResponse")
+				debug(204, "preparing ErrorResponse")
 				message = messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
@@ -209,7 +202,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 		if argsLength == 2 {
 			key, error := strconv.Atoi(args[1])
 			if error != nil {
-				debug(205, "preparing ErrorResponse")
+				debug(212, "preparing ErrorResponse")
 				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
 				message = &messages.ErrorResponse{Message: response}
 
@@ -217,10 +210,10 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 			}
 
 			if id != -1 && token != "" {
-				debug(213, "preparing SearchRequest")
+				debug(220, "preparing SearchRequest")
 				message = &messages.SearchRequest{Id: id, Token: token, Key: int32(key)}
 			} else {
-				debug(216, "preparing ErrorResponse")
+				debug(223, "preparing ErrorResponse")
 				message = messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
@@ -229,7 +222,7 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 			key, error := strconv.Atoi(args[1])
 
 			if error != nil {
-				debug(225, "preparing ErrorResponse")
+				debug(232, "preparing ErrorResponse")
 				response := fmt.Sprintf("invalid input for <key>: %s", args[1])
 				message = &messages.ErrorResponse{Message: response}
 
@@ -237,20 +230,20 @@ func getMessage(id int32, token string, args []string) (message interface{}) {
 			}
 
 			if id != -1 && token != "" {
-				debug(233, "preparing DeleteRequest")
+				debug(240, "preparing DeleteRequest")
 				message = &messages.DeleteRequest{Id: id, Token: token, Key: int32(key)}
 			} else {
-				debug(236, "preparing ErrorResponse")
+				debug(243, "preparing ErrorResponse")
 				message = messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
 	case traverse:
 		if argsLength == 1 {
 			if id != -1 && token != "" {
-				debug(243, "preparing TraverseRequest")
+				debug(250, "preparing TraverseRequest")
 				message = &messages.TraverseRequest{Id: id, Token: token}
 			} else {
-				debug(246, "preparing ErrorResponse")
+				debug(253, "preparing ErrorResponse")
 				message = messages.ErrorResponse{Message: wrongCredentials}
 			}
 		}
